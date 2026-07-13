@@ -2497,47 +2497,20 @@ class DobotApiDashboard(DobotApi):
 
     def RelMovLTool(self, offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1):
         """
-        描述
-        沿⼯具坐标系进⾏相对运动，末端运动⽅式为直线运动。
-        此条指令为六轴机械臂特有。
-        必选参数
-        参数名 类型 说明
-        offsetX double X轴⽅向偏移量，单位：mm
-        offsetY double Y轴⽅向偏移量，单位：mm
-        offsetZ double Z轴⽅向偏移量，单位：mm
-        offsetRx double Rx轴⽅向偏移量，单位：度
-        offsetRy double Ry轴⽅向偏移量，单位：度
-        offsetRz double Rz轴⽅向偏移量，单位：度
-        可选参数
-        参数名  类型  说明
-        user int ⽤⼾坐标系
-        tool int ⼯具坐标系
-        a int 执⾏该条指令时的机械臂运动加速度⽐例。取值范围：(0,100]
-        v int 执⾏该条指令时的机械臂运动速度⽐例。取值范围：(0,100]
-        speed int  执⾏该条指令时的机械臂运动⽬标速度，与v互斥，若同时存在以speed为
-        准。取值范围：[1, 最⼤运动速度]，单位：mm/s
-        cp int 平滑过渡⽐例，与r互斥。取值范围：[0,100]
-        r int 平滑过渡半径，与cp互斥，若同时存在以r为准。单位：mm
-        Description
-        Perform relative motion along the tool coordinate system, and the end motion is linear motion.
-        This command is for 6-axis robots.
-        Required parameter:
-        Parameter name     Type     Description
-        offsetX     double     X-axis offset, unit: mm
-        offsetY     double     Y-axis offset, unit: mm
-        offsetZ     double     Z-axis offset, unit: mm
-        offsetRx     double     Rx-axis offset, unit: °
-        offsetRy     double     Ry-axis offset, unit: °
-        offsetRz     double     Rz-axis offset, unit: °
-        Optional parameter:
-        Parameter name     Type     Description
-        user     int     user coordinate system
-        tool     int     tool coordinate system
-        a     int     acceleration rate of the robot arm when executing this command. Range: (0,100].
-        v     int     velocity rate of the robot arm when executing this command. Range: (0,100].
-        speed     int     target speed of the robot arm when executing this command, incompatible with “v”. If both "speed" and "v” exist, speed takes precedence. Range: [0, maximum motion speed], unit: mm/s.
-        cp     int     continuous path rate, incompatible with “r”. Range: [0,100].
-        r     int     continuous path radius, incompatible with “cp”. If both "r" and "cp” exist, r takes precedence. Unit: mm.
+        RelMovLTool - 沿工具坐标系相对直线运动
+        
+        参数:
+            offset_x~offset_rz: float - XYZ轴偏移量(mm)，RxRyRz轴偏移量(度)
+            user: int, 可选 - 用户坐标系[0,50]
+            tool: int, 可选 - 工具坐标系[0,50]
+            a: int, 可选 - 加速度比例[1,100]
+            v: int, 可选 - 速度比例[1,100]，与speed互斥
+            speed: int, 可选 - 目标速度mm/s，与v互斥，以speed为准
+            cp: int, 可选 - 平滑过渡比例[0,100]，与r互斥
+            r: int, 可选 - 平滑过渡半径mm，与cp互斥，以r为准
+        
+        返回:
+            ErrorID,{ResultID},RelMovLTool(...);
         """
         string = "RelMovLTool({:f},{:f},{:f},{:f},{:f},{:f}".format(
             offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz)
@@ -2567,40 +2540,18 @@ class DobotApiDashboard(DobotApi):
 
     def RelMovJUser(self, offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz, user=-1, tool=-1, a=-1, v=-1, cp=-1):
         """
-        描述
-        沿⽤⼾坐标系进⾏相对运动，末端运动⽅式为关节运动。
-        必选参数
-        参数名 类型 说明
-        offsetX double X轴⽅向偏移量，单位：mm
-        offsetY double Y轴⽅向偏移量，单位：mm
-        offsetZ double Z轴⽅向偏移量，单位：mm
-        offsetRx double Rx轴偏移量，单位：度
-        offsetRy double Ry轴偏移量，单位：度
-        offsetRz double Rz轴偏移量，单位：度
-        可选参数
-        参数名 类型 说明
-        user int ⽤⼾坐标系
-        tool int ⼯具坐标系
-        a int 执⾏该条指令时的机械臂运动加速度⽐例。取值范围：(0,100]
-        v int 执⾏该条指令时的机械臂运动速度⽐例。取值范围：(0,100]
-        cp int 平滑过渡⽐例。取值范围：[0,100]
-        Description
-        Perform relative motion along the user coordinate system, and the end motion is joint motion.
-        Required parameter:
-        Parameter name     Type     Description
-        offsetX     double     X-axis offset, unit: mm
-        offsetY     double     Y-axis offset, unit: mm
-        offsetZ     double     Z-axis offset, unit: mm
-        offsetRx     double     Rx-axis offset, unit: °
-        offsetRy     double     Ry-axis offset, unit: °
-        offsetRz     double     Rz-axis offset, unit: °
-        Optional parameter:
-        Parameter name     Type     Description
-        user     int     user coordinate system
-        tool     int     tool coordinate system
-        a     int     acceleration rate of the robot arm when executing this command. Range: (0,100].
-        v     int     velocity rate of the robot arm when executing this command. Range: (0,100].
-        cp     int     continuous path rate. Range: [0,100].
+        RelMovJUser - 沿用户坐标系相对关节运动
+        
+        参数:
+            offset_x~offset_rz: float - XYZ轴偏移量(mm)，RxRyRz轴偏移量(度)
+            user: int, 可选 - 用户坐标系[0,50]
+            tool: int, 可选 - 工具坐标系[0,50]
+            a: int, 可选 - 加速度比例[1,100]
+            v: int, 可选 - 速度比例[1,100]
+            cp: int, 可选 - 平滑过渡比例[0,100]
+        
+        返回:
+            ErrorID,{ResultID},RelMovJUser(...);
         """
         string = "RelMovJUser({:f},{:f},{:f},{:f},{:f},{:f}".format(
             offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz)
@@ -2622,45 +2573,20 @@ class DobotApiDashboard(DobotApi):
 
     def RelMovLUser(self, offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1):
         """
-        描述
-        沿⽤⼾坐标系进⾏相对运动，末端运动⽅式为直线运动。
-        必选参数
-        参数名 类型 说明
-        offsetX double X轴⽅向偏移量，单位：mm
-        offsetY double Y轴⽅向偏移量，单位：mm
-        offsetZ double Z轴⽅向偏移量，单位：mm
-        offsetRx double Rx轴偏移量，单位：度
-        offsetRy double Ry轴偏移量，单位：度
-        offsetRz double Rz轴偏移量，单位：度
-        可选参数
-        参数名  类型说明
-        user int ⽤⼾坐标系
-        tool int ⼯具坐标系
-        a int 执⾏该条指令时的机械臂运动加速度⽐例。取值范围：(0,100]
-        v int 执⾏该条指令时的机械臂运动速度⽐例。取值范围：(0,100]
-        speed int 执⾏该条指令时的机械臂运动⽬标速度，与v互斥，若同时存在以speed为
-        准。取值范围：[1, 最⼤运动速度]，单位：mm/s
-        cp int 平滑过渡⽐例，与r互斥。取值范围：[0,100]
-        r int 平滑过渡半径，与cp互斥，若同时存在以r为准。单位：mm
-        Description
-        Perform relative motion along the user coordinate system, and the end motion is linear motion.
-        Required parameter:
-        Parameter name     Type     Description
-        offsetX     double     X-axis offset, unit: mm
-        offsetY     double     Y-axis offset, unit: mm
-        offsetZ     double     Z-axis offset, unit: mm
-        offsetRx     double     Rx-axis offset, unit: °
-        offsetRy     double     Ry-axis offset, unit: °
-        offsetRz     double     Rz-axis offset, unit: °
-        Optional parameter:
-        Parameter name     Type     Description
-        user     int     user coordinate system
-        tool     int     tool coordinate system
-        a     int     acceleration rate of the robot arm when executing this command. Range: (0,100].
-        v     int     velocity rate of the robot arm when executing this command. Range: (0,100].
-        speed     int     target speed of the robot arm when executing this command, incompatible with “v”. If both "speed" and "v” exist, speed takes precedence. Range: [0, maximum motion speed], unit: mm/s.
-        cp     int     continuous path rate, incompatible with “r”. Range: [0,100].
-        r     int     continuous path radius, incompatible with “cp”. If both "r" and "cp” exist, r takes precedence. Unit: mm.
+        RelMovLUser - 沿用户坐标系相对直线运动
+        
+        参数:
+            offset_x~offset_rz: float - XYZ轴偏移量(mm)，RxRyRz轴偏移量(度)
+            user: int, 可选 - 用户坐标系[0,50]
+            tool: int, 可选 - 工具坐标系[0,50]
+            a: int, 可选 - 加速度比例[1,100]
+            v: int, 可选 - 速度比例[1,100]，与speed互斥
+            speed: int, 可选 - 目标速度mm/s，与v互斥，以speed为准
+            cp: int, 可选 - 平滑过渡比例[0,100]，与r互斥
+            r: int, 可选 - 平滑过渡半径mm，与cp互斥，以r为准
+        
+        返回:
+            ErrorID,{ResultID},RelMovLUser(...);
         """
         string = "RelMovLUser({:f},{:f},{:f},{:f},{:f},{:f}".format(
             offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz)
@@ -2690,36 +2616,16 @@ class DobotApiDashboard(DobotApi):
 
     def RelJointMovJ(self, offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz, a=-1, v=-1, cp=-1):
         """
-        描述
-        沿关节坐标系进⾏相对运动，末端运动⽅式为关节运动。
-        必选参数
-        参数名 类型 说明
-        offset1 double J1轴偏移量，单位：度
-        offset2 double J2轴偏移量，单位：度
-        offset3 double J3轴偏移量，单位：度
-        offset4 double J4轴偏移量，单位：度
-        offset5 double J5轴偏移量，单位：度
-        offset6 double J6轴偏移量，单位：度
-        可选参数
-        参数名 类型 说明
-        a int 执⾏该条指令时的机械臂运动加速度⽐例。取值范围：(0,100]
-        v int 执⾏该条指令时的机械臂运动速度⽐例。取值范围：(0,100]
-        cp int 平滑过渡⽐例。取值范围：[0,100]
-        Description
-        Perform relative motion along the joint coordinate system, and the end motion is joint motion.
-        Required parameter:
-        Parameter name     Type     Description
-        offset1     double     J1-axis offset, unit: °
-        offset2     double     J2-axis offset, unit: °
-        offset3     double     J3-axis offset, unit: °
-        offset4     double     J4-axis offset, unit: °
-        offset5     double     J5-axis offset, unit: °
-        offset6     double     J6-axis offset, unit: °
-        Optional parameter:
-        Parameter name     Type     Description
-        a     int     acceleration rate of the robot arm when executing this command. Range: (0,100].
-        v     int     velocity rate of the robot arm when executing this command. Range: (0,100].
-        cp     int     continuous path rate. Range: [0,100].
+        RelJointMovJ - 沿关节坐标系相对关节运动
+        
+        参数:
+            offset_x~offset_rz: float - J1~J6轴偏移量(度)
+            a: int, 可选 - 加速度比例[1,100]
+            v: int, 可选 - 速度比例[1,100]
+            cp: int, 可选 - 平滑过渡比例[0,100]
+        
+        返回:
+            ErrorID,{ResultID},RelJointMovJ(...);
         """
         string = "RelJointMovJ({:f},{:f},{:f},{:f},{:f},{:f}".format(
             offset_x, offset_y, offset_z, offset_rx, offset_ry, offset_rz)
@@ -2971,8 +2877,27 @@ class DobotApiDashboard(DobotApi):
     
     def RequestControl(self):
         """
-        Request control of the robot.
-        Note: This function sends a request for the control of the robot, which may be approved or denied.
+        RequestControl - 请求将设备控制模式切换为TCP模式
+        
+        只有在TCP模式下才可执行其他TCP指令。
+        
+        返回:
+            ErrorID,{},RequestControl();
+        
+        注意:
+            仅当机器人处于未上电或下使能（且非暂停或松抱闸状态）时才可切换TCP模式。
+            
+            允许切换TCP模式的场景:
+            - 未上电: 允许
+            - 下使能（非暂停状态、非抱闸松开状态）: 允许
+            - 使能空闲: 不允许
+            - 拖拽模式: 不允许
+            - 单次运动中: 不允许
+            - 运行中: 不允许
+            - 暂停: 不允许
+            - 错误（上使能情况下）: 不允许
+            - 松抱闸: 不允许
+            - 开启手自动模式: 不允许
         """
         string = "RequestControl()"
         return self.sendRecvMsg(string)
@@ -2981,7 +2906,15 @@ class DobotApiDashboard(DobotApi):
 
     def RelPointTool(self, coordinateMode,a1, b1, c1, d1, e1, f1, x, y, z, rx, ry, rz):
         """
-        沿工具坐标系笛卡尔点偏移。
+        RelPointTool - 沿工具坐标系笛卡尔点偏移
+        
+        参数:
+            coordinateMode: int - 坐标模式，0=pose位姿, 1=joint关节
+            a1~f1: float - 起始点位(x,y,z,rx,ry,rz)或(j1,j2,j3,j4,j5,j6)
+            x,y,z,rx,ry,rz: float - 偏移量
+        
+        返回:
+            ErrorID,{X,Y,Z,Rx,Ry,Rz},RelPointTool(...);
         """
         string = ""
         if coordinateMode == 0:
@@ -2996,7 +2929,15 @@ class DobotApiDashboard(DobotApi):
     
     def RelPointUser(self,coordinateMode,a1, b1, c1, d1, e1, f1, x, y, z, rx, ry, rz):
         """
-        沿用户坐标系笛卡尔点偏移。
+        RelPointUser - 沿用户坐标系笛卡尔点偏移
+        
+        参数:
+            coordinateMode: int - 坐标模式，0=pose位姿, 1=joint关节
+            a1~f1: float - 起始点位(x,y,z,rx,ry,rz)或(j1,j2,j3,j4,j5,j6)
+            x,y,z,rx,ry,rz: float - 偏移量
+        
+        返回:
+            ErrorID,{X,Y,Z,Rx,Ry,Rz},RelPointUser(...);
         """
         string = ""
         string = ""
@@ -3012,7 +2953,14 @@ class DobotApiDashboard(DobotApi):
 
     def RelJoint(self, j1, j2, j3, j4, j5, j6, offset1, offset2, offset3, offset4, offset5, offset6):
         """
-        RelJoint command
+        RelJoint - 关节点位偏移
+        
+        参数:
+            j1~j6: float - 原始关节位置，单位：度
+            offset1~offset6: float - 关节偏移量，单位：度
+        
+        返回:
+            ErrorID,{J1,J2,J3,J4,J5,J6},RelJoint(...);
         """
         string = "RelJoint({:f},{:f},{:f},{:f},{:f},{:f},{{{:f},{:f},{:f},{:f},{:f},{:f}}})".format(
             j1, j2, j3, j4, j5, j6, offset1, offset2, offset3, offset4, offset5, offset6)
@@ -3127,9 +3075,6 @@ class DobotApiDashboard(DobotApi):
         string += ')'
         return self.sendRecvMsg(string)
 
-    def ArcTrackStart(self):
-        return self.sendRecvMsg("ArcTrackStart()")
-
     def ArcTrackParams(self, sampleTime, coordinateType, upDownCompensationMin, upDownCompensationMax, upDownCompensationOffset, leftRightCompensationMin, leftRightCompensationMax, leftRightCompensationOffset):
         string = "ArcTrackParams({:d},{:d},{:f},{:f},{:f},{:f},{:f},{:f})".format(
             sampleTime, coordinateType, upDownCompensationMin, upDownCompensationMax, upDownCompensationOffset, leftRightCompensationMin, leftRightCompensationMax, leftRightCompensationOffset)
@@ -3137,32 +3082,6 @@ class DobotApiDashboard(DobotApi):
 
     def ArcTrackEnd(self):
         return self.sendRecvMsg("ArcTrackEnd()")
-
-    def CheckMovC(self, j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b, j1c, j2c, j3c, j4c, j5c, j6c, user=-1, tool=-1, a=-1, v=-1, cp=-1):
-        string = "CheckMovC(joint={{{:f},{:f},{:f},{:f},{:f},{:f}}},joint={{{:f},{:f},{:f},{:f},{:f},{:f}}},joint={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
-            j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b, j1c, j2c, j3c, j4c, j5c, j6c)
-        params = []
-        if user != -1: params.append('user={:d}'.format(user))
-        if tool != -1: params.append('tool={:d}'.format(tool))
-        if a != -1: params.append('a={:d}'.format(a))
-        if v != -1: params.append('v={:d}'.format(v))
-        if cp != -1: params.append('cp={:d}'.format(cp))
-        if params: string += "," + ",".join(params)
-        string += ")"
-        return self.sendRecvMsg(string)
-
-    def CheckMovJ(self, j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b, user=-1, tool=-1, a=-1, v=-1, cp=-1):
-        string = "CheckMovJ(joint={{{:f},{:f},{:f},{:f},{:f},{:f}}},joint={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
-            j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b)
-        params = []
-        if user != -1: params.append('user={:d}'.format(user))
-        if tool != -1: params.append('tool={:d}'.format(tool))
-        if a != -1: params.append('a={:d}'.format(a))
-        if v != -1: params.append('v={:d}'.format(v))
-        if cp != -1: params.append('cp={:d}'.format(cp))
-        if params: string += "," + ",".join(params)
-        string += ")"
-        return self.sendRecvMsg(string)
 
     def CheckOddMovC(self, j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b, j1c, j2c, j3c, j4c, j5c, j6c, user=-1, tool=-1, a=-1, v=-1, cp=-1):
         string = "CheckOddMovC(joint={{{:f},{:f},{:f},{:f},{:f},{:f}}},joint={{{:f},{:f},{:f},{:f},{:f},{:f}}},joint={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
@@ -3205,12 +3124,50 @@ class DobotApiDashboard(DobotApi):
 
     def CnvInit(self, index):
         """
-        CnvInit command
+        CnvInit - 开启传送带 立即指令
+        
+        开启传送带并下发传送带配置信息。删除所有队列信息，开始检测并存储新的队列信息。
+        
+        原型:
+            CnvInit(index)
+        
+        参数:
+            index: int - 传送带编号1/2/3，机器人最多支持三条传送带。设置为其他数值会报错。
+        
+        返回:
+            ErrorID,{},CnvInit(index);
+        
+        示例:
+            CnvInit(1)  # 开启1号传送带并下发传送带配置信息
         """
         string = "CnvInit({:d})".format(index)
         return self.sendRecvMsg(string)
 
     def CnvMovL(self, j1, j2, j3, j4, j5, j6, user=-1, tool=-1, a=-1, v=-1, cp=-1, r=-1):
+        """
+        CnvMovL - 执行传动带跟随，采取直线轨迹插补 队列指令
+        
+        基于工件坐标系，机器人直线运动到目标点位执行传送带跟踪。
+        
+        原型:
+            CnvMovL(P,user, tool, a, v, cp|r)
+        
+        参数:
+            j1~j6: float - 目标点，支持关节变量(j1,j2,j3,j4,j5,j6)或位姿变量(x,y,z,rx,ry,rz)
+            user: int, 可选 - 用户坐标系索引，取值范围：[0,50]
+            tool: int, 可选 - 工具坐标系索引，取值范围：[0,50]
+            a: int, 可选 - 机器人运动加速度比例，取值范围：[1,100]
+            v: int, 可选 - 机器人运动速度比例，取值范围：[1,100]
+            cp: int, 可选 - 平滑过渡比例，与r互斥，取值范围：[0,100]
+            r: int, 可选 - 平滑过渡半径，单位mm，与cp互斥，若同时存在以r为准
+        
+        返回:
+            ErrorID,{flag},CnvMovL(P,user, tool, a, v, cp|r);
+            flag: 0-执行成功, 1-跟随失败未检测到工件类型, 2-跟随失败工件未进入拾取边界范围, 3-跟随失败工件超出离开边界
+        
+        示例:
+            CnvMovL(x,y,z,rx,ry,rz, user=1, tool=0, a=20, v=50, cp=100)
+        """
         string = "CnvMovL(pose={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
             j1, j2, j3, j4, j5, j6)
         params = []
@@ -3225,6 +3182,43 @@ class DobotApiDashboard(DobotApi):
         return self.sendRecvMsg(string)
 
     def CnvMovC(self, j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b, user=-1, tool=-1, a=-1, v=-1, cp=-1, r=-1, mode=1):
+        """
+        CnvMovC - 执行传动带跟随，采取圆弧轨迹插补 队列指令
+        
+        基于工件坐标系，机器人从当前位置通过圆弧运动方式经由中间点位P1运动至目标点位P2后，
+        执行传送带跟踪。
+        
+        原型:
+            CnvMovC(P1,P2,user, tool, a, v, cp|r, mode)
+        
+        参数:
+            j1a~j6a: float - 圆弧中间点P1，支持关节变量(j1,j2,j3,j4,j5,j6)或位姿变量(x,y,z,rx,ry,rz)
+            j1b~j6b: float - 运动目标点P2，支持关节变量(j1,j2,j3,j4,j5,j6)或位姿变量(x,y,z,rx,ry,rz)
+            user: int, 可选 - 用户坐标系索引，取值范围：[0,50]
+            tool: int, 可选 - 工具坐标系索引，取值范围：[0,50]
+            a: int, 可选 - 机械臂运动加速度比例，取值范围：[1,100]
+            v: int, 可选 - 机械臂运动速度比例，取值范围：[1,100]
+            cp: int, 可选 - 平滑过渡比例，与r互斥，取值范围：[0,100]
+            r: int, 可选 - 平滑过渡半径，单位mm，与cp互斥，若同时存在以r为准
+            mode: int, 可选 - 姿态控制参数，取值范围：[0, 2]
+                  mode=0: 线性模式，从当前姿态插值到P2目标位姿，忽略P1姿态，适用于对机器人姿态无要求的场合
+                  mode=1: 过中间点模式，从当前姿态开始，经过中间点位姿，插值到P2目标位姿，主要用于焊接应用
+                  mode=2: 固定模式，TCP保持相对于圆弧切线的方向不变，忽略P1和P2姿态，主要用于涂胶、打磨等应用
+        
+        注意:
+            当设置为mode=1（过中间点模式）时，为了保证圆弧运动速度的均匀性，示教圆弧轨迹时，
+            尽可能保证中间点的位置处于实际圆弧的一半。
+            当设置为mode=1（过中间点模式）时，需要适当调整各点姿态，保证起始点到中间点的姿态变化
+            与中间点到目标点的姿态变化角度接近。否则所构造的姿态曲线可能超出机器人的可达范围，
+            运行时会报错。
+        
+        返回:
+            ErrorID,{flag},CnvMovC(P1,P2,user, tool, a, v, cp|r, mode);
+            flag: 0-执行成功, 1-跟随失败未检测到工件类型, 2-跟随失败工件未进入拾取边界范围, 3-跟随失败工件超出离开边界
+        
+        示例:
+            CnvMovC(j1,j2,j3,j4,j5,j6, j7,j8,j9,j10,j11,j12, user=1, tool=0, a=20, v=50, cp=100)
+        """
         string = "CnvMovC(pose={{{:f},{:f},{:f},{:f},{:f},{:f}}},pose={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
             j1a, j2a, j3a, j4a, j5a, j6a, j1b, j2b, j3b, j4b, j5b, j6b)
         params = []
@@ -3239,13 +3233,55 @@ class DobotApiDashboard(DobotApi):
         string += ")"
         return self.sendRecvMsg(string)
 
-    def CreateTray(self, *args, **kwargs):
+    def CreateTray(self, trayName, dims, points):
         """
-        CreateTray command
-        Due to missing documentation on exact parameters, this function uses dynamic arguments.
-        Example: CreateTray(rows=3, cols=4, ...)
+        CreateTray - 创建托盘，支持创建一维、二维和三维的托盘
+        
+        最多可创建20个托盘，创建同名的托盘时会覆盖已有的托盘，不会增加托盘数量。
+        
+        原型:
+            CreateTray(Trayname, {Count}, {P1,P2}) -- 一维托盘
+            CreateTray(Trayname, {row,col}, {P1,P2,P3,P4}) -- 二维托盘
+            CreateTray(Trayname, {row,col,layer}, {P1,P2,P3,P4,P5,P6,P7,P8}) -- 三维托盘
+        
+        参数:
+            trayName: string - 托盘名称，最长32字节的字符串，不允许为纯数字或者纯空格
+            dims: list - 根据托盘维度不同，内容不同：
+                        一维托盘: [Count] - Count表示点位数量，取值范围：[2, 50]，输入非整数会自动向下取整
+                        二维托盘: [row, col] - row表示行方向(P1到P2方向)上点位的数量，
+                                        col表示列方向(P1到P4方向)上点位的数量，取值范围：[2, 50]
+                        三维托盘: [row, col, layer] - row表示行方向(P1到P2方向)上点位的数量，
+                                           col表示列方向(P1到P4方向)上点位的数量，
+                                           layer表示层数(P1到P5方向)，取值范围：[2, 50]
+            points: list - 托盘顶点列表，每个点为6元素的tuple或list(x, y, z, rx, ry, rz)：
+                        一维托盘: [P1, P2] - 一维托盘的2个端点
+                        二维托盘: [P1, P2, P3, P4] - 二维托盘的4个顶点
+                        三维托盘: [P1, P2, P3, P4, P5, P6, P7, P8] - 三维托盘的8个顶点
+        
+        返回:
+            ErrorID,{},CreateTray( ... );
+        
+        示例:
+            # 创建名称为t1的5个点的一维托盘
+            CreateTray("t1", [5], [(x1,y1,z1,rx1,ry1,rz1), (x2,y2,z2,rx2,ry2,rz2)])
+            
+            # 创建名称为t2的4x5的二维托盘
+            CreateTray("t2", [4, 5], [P1, P2, P3, P4])
+            
+            # 创建名称为t3的4x5x6的三维托盘
+            CreateTray("t3", [4, 5, 6], [P1, P2, P3, P4, P5, P6, P7, P8])
         """
-        return self.sendRecvMsg(self._build_cmd("CreateTray", *args, **kwargs))
+        string = "CreateTray(" + trayName + ","
+        dims_str = "{" + ",".join([str(int(d)) for d in dims]) + "}"
+        string += dims_str + ","
+        
+        pts_str = []
+        for pt in points:
+            pts_str.append("pose={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(*pt))
+        string += "{" + ",".join(pts_str) + "}"
+        
+        string += ")"
+        return self.sendRecvMsg(string)
 
     def EndRTOffset(self):
         return self.sendRecvMsg("EndRTOffset()")
@@ -3263,6 +3299,28 @@ class DobotApiDashboard(DobotApi):
         return self.sendRecvMsg("SetFCCollision({:f},{:f})".format(force, torque))
 
     def GetCnvObject(self, objId):
+        """
+        GetCnvObject - 等待指定工件进入传送带的抓取区域 立即指令
+        
+        等待指定工件进入传送带的抓取区域（即拾取上边界与拾取下边界组成的区域）。
+        
+        原型:
+            GetCnvObject(objId)
+        
+        参数:
+            objId: int - 工件类型，取值范围 [0, 15]
+                   0: 不指定工件类型，获取最先进入队列的工件信息
+                   1~15: 获取最先进入队列的指定工件信息
+        
+        返回:
+            ErrorID,{flag, objId, objframe},GetCnvObject(objId);
+            flag: 0-没有工件, 1-有工件, -1-执行错误重新执行, -2-有错误未处理, -3-非跟踪初始化状态需执行CnvInit或StopSyncCnv
+            objId: 工件类型号，仅当参数objId为0时该返回值有意义
+            objframe: 当前时刻的工件坐标系（参考机器人基坐标系）
+        
+        示例:
+            GetCnvObject(0)
+        """
         return self.sendRecvMsg("GetCnvObject({:d})".format(objId))
 
     def DOGroupDEC(self, group, value):
@@ -3274,61 +3332,41 @@ class DobotApiDashboard(DobotApi):
     def DIGroupDEC(self, group, value):
         return self.sendRecvMsg("DIGroupDEC({:d},{:d})".format(group, value))
 
-    def InverseSolution(self, a1, b1, c1, d1, e1, f1, user=-1, tool=-1, isJoint=0):
-        """
-        InverseSolution command
-        """
-        string = "InverseSolution(pose={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
-            a1, b1, c1, d1, e1, f1)
-        
-        params = []
-        if user != -1:
-            params.append('user={:d}'.format(user))
-        if tool != -1:
-            params.append('tool={:d}'.format(tool))
-        if isJoint != 0:
-            params.append('isJoint={:d}'.format(isJoint))
-            
-        for ii in params:
-            string += ',' + ii
-        string += ')'
-        return self.sendRecvMsg(string)
-
-    def MoveL(self, a1, b1, c1, d1, e1, f1, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1):
-        """
-        MoveL command
-        """
-        string = "MoveL(pose={{{:f},{:f},{:f},{:f},{:f},{:f}}}".format(
-            a1, b1, c1, d1, e1, f1)
-        
-        params = []
-        if user != -1:
-            params.append('user={:d}'.format(user))
-        if tool != -1:
-            params.append('tool={:d}'.format(tool))
-        if a != -1:
-            params.append('a={:d}'.format(a))
-        if v != -1 and speed != -1:
-            params.append('speed={:d}'.format(speed))
-        elif speed != -1:
-            params.append('speed={:d}'.format(speed))
-        elif v != -1:
-            params.append('v={:d}'.format(v))
-        if cp != -1 and r != -1:
-            params.append('r={:d}'.format(r))
-        elif r != -1:
-            params.append('r={:d}'.format(r))
-        elif cp != -1:
-            params.append('cp={:d}'.format(cp))
-            
-        for ii in params:
-            string += ',' + ii
-        string += ')'
-        return self.sendRecvMsg(string)
-
     def MovS(self, file=None, coordinateMode=-1, points=None, user=-1, tool=-1, v=-1, speed=-1, a=-1, freq=-1):
         """
-        MovS command
+        MovS - 拟合指定的轨迹
+        
+        调用该指令前需要用户自行运行机械臂到轨迹的起始点。
+        
+        原型:
+            MovS(P1,P2,P3,... ,user,tool,a,v|speed,freq)
+            MovS(file,user,tool,a,v|speed,freq)
+        
+        参数:
+            file: string, 可选 - 待拟合的轨迹文件，格式为"x.csv"，代表一个轨迹文件的名字（含后缀名）
+            coordinateMode: int, 可选 - 坐标模式，0表示位姿点位(pose)，1表示关节点位(joint)
+            points: list, 可选 - 待拟合的点位列表，每个点位为6元素的tuple或list，点位数量范围是[4, 50]
+                    coordinateMode=0时，points元素格式为(x, y, z, rx, ry, rz)
+                    coordinateMode=1时，points元素格式为(j1, j2, j3, j4, j5, j6)
+            user: int, 可选 - 指定轨迹点位对应的用户坐标系索引，取值范围：[0,50]
+                  不指定时使用轨迹文件中记录的用户坐标系索引
+            tool: int, 可选 - 指定轨迹点位对应的工具坐标系索引，取值范围：[0,50]
+                  不指定时使用轨迹文件中记录的工具坐标系索引
+            a: int, 可选 - 机器人运动加速度比例，取值范围：[1,100]
+            v: int, 可选 - 机器人运动速度比例，取值范围：[1,100]，与speed互斥
+            speed: int, 可选 - 机器人运动目标速度，单位：mm/s，取值范围：[1, 最大运动速度]
+                   与v互斥，若同时存在以speed为准
+            freq: float, 可选 - 滤波系数，取值范围：(0,1]，默认1（表示关闭滤波）
+                  值越小，拟合的轨迹曲线越平滑，但相对原轨迹的变形越严重
+        
+        注意:
+            该指令必须输入点位列表points或轨迹文件file其中一个参数
+            CAD输出的轨迹可以设置freq为1，保证精度
+            如果是3D相机等曲线，建议打开滤波(freq<1)，保证曲线的平滑
+        
+        返回:
+            ErrorID,{},MovS(P1,P2,P3,... ,user,tool,a,v|speed,freq);
+            ErrorID,{},MovS(file,user,tool,a,v|speed,freq);
         """
         string = "MovS("
         if file is not None:
@@ -3351,16 +3389,14 @@ class DobotApiDashboard(DobotApi):
             params.append('user={:d}'.format(user))
         if tool != -1:
             params.append('tool={:d}'.format(tool))
-        if v != -1 and speed != -1:
-            params.append('speed={:d}'.format(speed))
-        elif speed != -1:
+        if speed != -1:
             params.append('speed={:d}'.format(speed))
         elif v != -1:
             params.append('v={:d}'.format(v))
         if a != -1:
              params.append('a={:d}'.format(a))
         if freq != -1:
-             params.append('freq={:d}'.format(freq))
+             params.append('freq={:f}'.format(freq))
              
         if len(params) > 0:
              if file is not None or (points is not None and len(points) > 0):
@@ -3385,9 +3421,6 @@ class DobotApiDashboard(DobotApi):
         Example: GetTrayPoint(trayName)
         """
         return self.sendRecvMsg(self._build_cmd("GetTrayPoint", *args, **kwargs))
-
-    def ResetRobot(self):
-        return self.sendRecvMsg("ResetRobot()")
 
     def RunTo(self, a1, b1, c1, d1, e1, f1, moveType, user=-1, tool=-1, a=-1, v=-1):
         """
@@ -3425,15 +3458,72 @@ class DobotApiDashboard(DobotApi):
         return self.sendRecvMsg(string)
 
     def SetCnvPointOffset(self, xOffset, yOffset):
+        """
+        SetCnvPointOffset - 设置传送带用户坐标系下X、Y方向的偏移量 立即指令
+        
+        原型:
+            SetCnvPointOffset(xOffset, yOffset)
+        
+        参数:
+            xOffset: double - X轴方向偏移量，单位mm
+            yOffset: double - Y轴方向偏移量，单位mm
+        
+        返回:
+            ErrorID,{},SetCnvPointOffset(xOffset, yOffset);
+        
+        示例:
+            SetCnvPointOffset(10, 10)
+        """
         return self.sendRecvMsg("SetCnvPointOffset({:f},{:f})".format(xOffset, yOffset))
 
     def SetCnvTimeCompensation(self, time):
+        """
+        SetCnvTimeCompensation - 设置补偿时间 立即指令
+        
+        设置补偿时间，补偿因视觉触发带来的时间延时导致工件抓取位置偏移。
+        
+        原型:
+            SetCnvTimeCompensation(time)
+        
+        参数:
+            time: int - 补偿时间，单位ms
+        
+        返回:
+            ErrorID,{},SetCnvTimeCompensation(time);
+        
+        示例:
+            SetCnvTimeCompensation(100)
+        """
         return self.sendRecvMsg("SetCnvTimeCompensation({:d})".format(time))
 
     def StartSyncCnv(self):
+        """
+        StartSyncCnv - 开启传送带跟踪功能 立即指令
+        
+        开启传送带跟踪功能。
+        
+        返回:
+            ErrorID,{},StartSyncCnv();
+        
+        注意:
+            需要配合StopSyncCnv()指令一起使用，StartSyncCnv()和StopSyncCnv()之间的程序
+            不得调用除CnvMovL和CnvMovC以外的其他运动指令，否则会报错。
+        """
         return self.sendRecvMsg("StartSyncCnv()")
 
     def StopSyncCnv(self):
+        """
+        StopSyncCnv - 停止传送带跟踪功能 立即指令
+        
+        停止传送带跟踪功能。运行完该指令后才会继续执行该指令后面的其他指令。
+        
+        返回:
+            ErrorID,{},StopSyncCnv();
+        
+        注意:
+            需要配合StartSyncCnv()指令一起使用，StartSyncCnv()和StopSyncCnv()之间的程序
+            不得调用除CnvMovL和CnvMovC以外的其他运动指令，否则会报错。
+        """
         return self.sendRecvMsg("StopSyncCnv()")
 
     def TcpSendAndParse(self, cmd):
