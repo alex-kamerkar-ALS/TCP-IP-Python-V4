@@ -37,57 +37,84 @@ class Plugins:
         """
         GetForce获取力传感器数值（立即指令）        
         Args:
-            tool: 工具坐标系编号(-1表示使用当前工具坐标系)
+            tool: 工具坐标系编号，取值范围[0, 50]，-1表示使用当前工具坐标系
         """
         if tool == -1:
             return self._send_cmd("GetForce()")
+        if not (0 <= tool <= 50):
+            raise ValueError("tool参数必须在[0, 50]之间")
         return self._send_cmd(f"GetForce({tool})")
 
     # ==================== 力控拖拽模式 ====================
 
-    def force_drive_mode(self, status: int) -> str:
+    def force_drive_mode(self, direction: Sequence[int], user: int = -1) -> str:
         """
-        ForceDriveMode进入力控拖拽模式（立即指令）
+        ForceDriveMode指定可拖拽的方向并进入力控拖拽模式（立即指令）
         
         Args:
-            status: 0-退出拖拽模式 1-进入拖拽模式
+            direction: 6个方向的拖拽开关 [x,y,z,rx,ry,rz]，0表示该方向不能拖拽，1表示该方向可以拖拽
+            user: 用户坐标系编号，取值范围[0, 50]，不指定时表示不参考用户坐标系
         """
-        if status not in [0, 1]:
-            raise ValueError("状态必须是0或1")
-        return self._send_cmd(f"ForceDriveMode({status})")
+        if len(direction) != 6:
+            raise ValueError("direction需要6个参数")
+        for d in direction:
+            if d not in [0, 1]:
+                raise ValueError("direction参数值必须是0或1")
+        if user != -1 and not (0 <= user <= 50):
+            raise ValueError("user参数必须在[0, 50]之间")
+        direction_str = "{" + ",".join([f"{v}" for v in direction]) + "}"
+        if user == -1:
+            return self._send_cmd(f"ForceDriveMode({direction_str})")
+        return self._send_cmd(f"ForceDriveMode({direction_str},{user})")
 
     def force_drive_speed(self, speed: int) -> str:
         """
         ForceDriveSpeed设置力控拖拽速度（立即指令）
         
         Args:
-            speed: 力控拖拽速度比例 (0-100)
+            speed: 力控拖拽速度比例，取值范围[1, 100]
         """
-        if not 0 <= speed <= 100:
-            raise ValueError("速度比例必须在0-100之间")
+        if not 1 <= speed <= 100:
+            raise ValueError("速度比例必须在1-100之间")
         return self._send_cmd(f"ForceDriveSpeed({speed})")
 
     # ==================== 力控模式参数设置 ====================
 
-    def fc_force_mode(self, pose: Sequence[float], force: Sequence[float],
-                      reference: int = -1, user: int = -1, tool: int = -1) -> str:
+    def fc_force_mode(self, direction: Sequence[int], force: Sequence[float],
+                      reference: int = 0, user: int = -1, tool: int = -1) -> str:
         """
         FCForceMode以用户指定的参数开启力控（队列指令)        
         Args:
-            pose: 6个方向的刚度系数 [x,y,z,rx,ry,rz]
-            force: 6个方向的目标力[fx,fy,fz,frx,fry,frz]
-            reference: 参考坐标系类型 (-1-工具坐标系 1-用户坐标系)
+            direction: 6个方向的力控开关 [x,y,z,rx,ry,rz]，1表示开启，0表示关闭
+            force: 6个方向的目标力[fx,fy,fz,frx,fry,frz]，位移方向[-200,200]N，姿态方向[-12,12]N/m
+            reference: 参考坐标系类型 (0-工具坐标系 1-用户坐标系)
             user: 用户坐标系编号(0-50)
             tool: 工具坐标系编号(0-50)
         """
-        if len(pose) != 6:
-            raise ValueError("pose需要6个参数")
+        if len(direction) != 6:
+            raise ValueError("direction需要6个参数")
         if len(force) != 6:
             raise ValueError("force需要6个参数")
-        pose_str = "{" + ",".join([f"{v}" for v in pose]) + "}"
+        for d in direction:
+            if d not in [0, 1]:
+                raise ValueError("direction参数值必须是0或1")
+        for i, f in enumerate(force):
+            if i < 3:
+                if not (-200 <= f <= 200):
+                    raise ValueError("位移方向目标力必须在[-200, 200]之间")
+            else:
+                if not (-12 <= f <= 12):
+                    raise ValueError("姿态方向目标力必须在[-12, 12]之间")
+        if user != -1 and not (0 <= user <= 50):
+            raise ValueError("user参数必须在[0, 50]之间")
+        if tool != -1 and not (0 <= tool <= 50):
+            raise ValueError("tool参数必须在[0, 50]之间")
+        if reference not in [0, 1]:
+            raise ValueError("reference参数必须是0或1")
+        direction_str = "{" + ",".join([f"{v}" for v in direction]) + "}"
         force_str = "{" + ",".join([f"{v}" for v in force]) + "}"
-        params = [pose_str, force_str]
-        if reference != -1:
+        params = [direction_str, force_str]
+        if reference != 0:
             params.append(f"reference={reference}")
         if user != -1:
             params.append(f"user={user}")
@@ -100,10 +127,19 @@ class Plugins:
         FCSetDeviation设置力控模式下的位移和姿态偏差（立即指令）        
         Args:
             deviation: 6个方向的偏差 [x,y,z,rx,ry,rz]，位移单位mm，姿态单位度
-            control_type: 控制类型 (-1表示默认)
+                       位移偏差取值范围(0, 1000]，默认值100；姿态偏差取值范围(0, 360]，默认值36
+            control_type: 控制类型，0-超过阈值时报警，1-超过阈值时停止搜寻继续运动，-1表示默认
         """
         if len(deviation) != 6:
             raise ValueError("偏差需要6个参数")
+        for v in deviation[:3]:
+            if not (0 < v <= 1000):
+                raise ValueError("位移偏差必须在(0, 1000]之间")
+        for v in deviation[3:]:
+            if not (0 < v <= 360):
+                raise ValueError("姿态偏差必须在(0, 360]之间")
+        if control_type not in [-1, 0, 1]:
+            raise ValueError("control_type必须是-1、0或1")
         dev_str = "{" + ",".join([f"{v}" for v in deviation]) + "}"
         if control_type == -1:
             return self._send_cmd(f"FCSetDeviation({dev_str})")
@@ -115,9 +151,15 @@ class Plugins:
         FCSetForceLimit设置最大力限制（立即指令）
         
         Args:
-            x,y,z: 位移方向最大力限制 (N)
-            rx,ry,rz: 姿态方向最大力限制 (N/m)
+            x,y,z: 位移方向最大力限制 (N)，取值范围(0, 500]，默认值500
+            rx,ry,rz: 姿态方向最大力限制 (N/m)，取值范围(0, 50]，默认值50
         """
+        for v in [x, y, z]:
+            if not (0 < v <= 500):
+                raise ValueError("位移方向最大力限制必须在(0, 500]之间")
+        for v in [rx, ry, rz]:
+            if not (0 < v <= 50):
+                raise ValueError("姿态方向最大力限制必须在(0, 50]之间")
         return self._send_cmd(f"FCSetForceLimit({x},{y},{z},{rx},{ry},{rz})")
 
     def fc_set_mass(self, x: float, y: float, z: float,
@@ -125,9 +167,12 @@ class Plugins:
         """
         FCSetMass设置力控模式下各方向的惯性系数（立即指令）        
         Args:
-            x,y,z: 位移方向惯性系数(kg)
-            rx,ry,rz: 姿态方向惯性系数(kg·m²)
+            x,y,z: 位移方向惯性系数(kg)，取值范围(0, 10000]，默认值20
+            rx,ry,rz: 姿态方向惯性系数(kg·m²)，取值范围(0, 10000]，默认值20
         """
+        for v in [x, y, z, rx, ry, rz]:
+            if not (0 < v <= 10000):
+                raise ValueError("惯性系数必须在(0, 10000]之间")
         return self._send_cmd(f"FCSetMass({x},{y},{z},{rx},{ry},{rz})")
 
     def fc_set_stiffness(self, x: float, y: float, z: float,
@@ -135,9 +180,12 @@ class Plugins:
         """
         FCSetStiffness设置力控模式下各方向的弹性系数（立即指令）        
         Args:
-            x,y,z: 位移方向弹性系数(N/mm)
-            rx,ry,rz: 姿态方向弹性系数(N/m·deg)
+            x,y,z: 位移方向弹性系数(N/mm)，取值范围[0, 10000]，默认值30
+            rx,ry,rz: 姿态方向弹性系数(N/m·deg)，取值范围[0, 10000]，默认值30
         """
+        for v in [x, y, z, rx, ry, rz]:
+            if not (0 <= v <= 10000):
+                raise ValueError("弹性系数必须在[0, 10000]之间")
         return self._send_cmd(f"FCSetStiffness({x},{y},{z},{rx},{ry},{rz})")
 
     def fc_set_damping(self, x: float, y: float, z: float,
@@ -145,9 +193,12 @@ class Plugins:
         """
         FCSetDamping设置力控模式下各方向的阻尼系数（立即指令）        
         Args:
-            x,y,z: 位移方向阻尼系数 (N·s/mm)
-            rx,ry,rz: 姿态方向阻尼系数(N·s/m·deg)
+            x,y,z: 位移方向阻尼系数 (N·s/mm)，取值范围[0, 1000]，默认值50
+            rx,ry,rz: 姿态方向阻尼系数(N·s/m·deg)，取值范围[0, 1000]，默认值50
         """
+        for v in [x, y, z, rx, ry, rz]:
+            if not (0 <= v <= 1000):
+                raise ValueError("阻尼系数必须在[0, 1000]之间")
         return self._send_cmd(f"FCSetDamping({x},{y},{z},{rx},{ry},{rz})")
 
     def fc_off(self) -> str:
@@ -161,34 +212,58 @@ class Plugins:
         
         Args:
             x,y,z: 位移方向力控调节速度 (mm/s)
+                   CRA/CRAF机型取值范围(0,安全限制TCP速度值]
+                   其他机型取值范围(0, 300]
             rx,ry,rz: 姿态方向力控调节速度 (deg/s)
+                      CRA/CRAF机型取值范围(0,(4*安全限制TCP速度值*0.001)/(3.14*180)]
+                      其他机型取值范围(0, 90]
         """
+        for v in [x, y, z]:
+            if not (0 < v <= 300):
+                raise ValueError("位移方向力控调节速度必须在(0, 300]之间")
+        for v in [rx, ry, rz]:
+            if not (0 < v <= 90):
+                raise ValueError("姿态方向力控调节速度必须在(0, 90]之间")
         return self._send_cmd(f"FCSetForceSpeedLimit({x},{y},{z},{rx},{ry},{rz})")
 
-    def fc_set_force(self, fx: float, fy: float, fz: float,
-                     frx: float, fry: float, frz: float) -> str:
+    def fc_set_force(self, x: float, y: float, z: float,
+                     rx: float, ry: float, rz: float) -> str:
         """
-        FCSetForce实时调整恒力设置（立即指令）
+        FCSetForce实时调整各方向的恒力设置（立即指令）
         
         Args:
-            fx,fy,fz: 位移方向目标力(N)
-            frx,fry,frz: 姿态方向目标力 (N/m)
+            x,y,z: 位移方向恒力值(N)，取值范围[-200, 200]
+            rx,ry,rz: 姿态方向恒力值 (N/m)，取值范围[-12, 12]
         """
-        return self._send_cmd(f"FCSetForce({fx},{fy},{fz},{frx},{fry},{frz})")
+        for v in [x, y, z]:
+            if not (-200 <= v <= 200):
+                raise ValueError("位移方向恒力值必须在[-200, 200]之间")
+        for v in [rx, ry, rz]:
+            if not (-12 <= v <= 12):
+                raise ValueError("姿态方向恒力值必须在[-12, 12]之间")
+        return self._send_cmd(f"FCSetForce({x},{y},{z},{rx},{ry},{rz})")
 
     # ==================== 力传感器碰撞检测（仅适用CRAF机型）====================
 
-    def set_fc_collision(self, sensitivity: int, threshold: float) -> str:
+    def set_fc_collision(self, force: float, torque: float) -> str:
         """
         SetFCCollision设置力传感器碰撞检测的阈值参数（仅适用CRAF机型，立即指令）
         
         Args:
-            sensitivity: 碰撞检测灵敏度 (0-10)
-            threshold: 碰撞检测阈值(N)
+            force: 触发力传感器碰撞检测的力阈值，单位N
+                   CR5AF取值范围：[5, 150]
+                   CR10AF取值范围：[5, 300]
+                   CR20AF取值范围：[5, 500]
+            torque: 触发力传感器碰撞检测的力矩阈值，单位N/m
+                    CR5AF取值范围：[0.5, 15]
+                    CR10AF取值范围：[0.5, 30]
+                    CR20AF取值范围：[0.5, 50]
         """
-        if not 0 <= sensitivity <= 10:
-            raise ValueError("灵敏度必须在0-10之间")
-        return self._send_cmd(f"SetFCCollision({sensitivity},{threshold})")
+        if not (5 <= force <= 500):
+            raise ValueError("力阈值必须在[5, 500]之间，具体范围取决于机型")
+        if not (0.5 <= torque <= 50):
+            raise ValueError("力矩阈值必须在[0.5, 50]之间，具体范围取决于机型")
+        return self._send_cmd(f"SetFCCollision({force},{torque})")
 
     def fc_collision_switch(self, status: int) -> str:
         """
