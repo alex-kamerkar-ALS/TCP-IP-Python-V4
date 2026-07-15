@@ -2780,8 +2780,7 @@ class DobotApiDashboard(DobotApi):
         tool  
             格式为"tool=index"，index为已标定的工具坐标系索引。取值范围：[0,50]。
         """
-        string = ""
-        string = "FCForceMode("+"{"+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)+"},"+"{"+"{:d},{:d},{:d},{:d},{:d},{:d}".format(fx,fy,fz,frx,fry,frz)+"}"
+        string = "FCForceMode("+"{"+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)+"},"+"{"+"{:g},{:g},{:g},{:g},{:g},{:g}".format(fx,fy,fz,frx,fry,frz)+"}"
         params = []
         if reference != -1:
             params.append('reference={:d}'.format(reference))
@@ -2806,8 +2805,7 @@ class DobotApiDashboard(DobotApi):
         0：超过阈值时，机械臂报警（默认值）。
         1：超过阈值时，机械臂停止搜寻而在原有轨迹上继续运动。
         """
-        string = ""
-        string = "FCSetDeviation("+"{"+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)+"}"
+        string = "FCSetDeviation("+"{"+"{:g},{:g},{:g},{:g},{:g},{:g}".format(x,y,z,rx,ry,rz)+"}"
         if controltype != -1:
             string = string + ',{:d}'.format(controltype)
         string = string + ')'
@@ -2815,38 +2813,35 @@ class DobotApiDashboard(DobotApi):
     
     def FCSetForceLimit(self, x, y, z, rx, ry, rz):
         """
-        设置各方向的最大力限制（该设置对所有方向均生效，包含未启用力控的方向）。
+        设置各方向的最大力限制（该设置对所有方向均生效，包含未启用力控的方向）。TCP模式退出后，参数恢复默认值。
+        x,y,z：取值范围(0,500]，默认值500。
+        rx,ry,rz：取值范围(0,50]，默认值50。
         """
-        string = ""
-        string = "FCSetForceLimit("+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)
-        string = string + ')'
+        string = "FCSetForceLimit({:g},{:g},{:g},{:g},{:g},{:g})".format(x,y,z,rx,ry,rz)
         return self.sendRecvMsg(string)
     
     def FCSetMass(self, x, y, z, rx, ry, rz):
         """
-        设置力控模式下各方向的惯性系数。
+        设置力控模式下各方向的惯性系数。TCP模式退出后，参数恢复默认值。
+        x,y,z,rx,ry,rz：取值范围(0,10000]，默认值20。
         """
-        string = ""
-        string = "FCSetMass("+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)
-        string = string + ')'
+        string = "FCSetMass({:g},{:g},{:g},{:g},{:g},{:g})".format(x,y,z,rx,ry,rz)
         return self.sendRecvMsg(string)
     
     def FCSetStiffness(self, x, y, z, rx, ry, rz):
         """
-        设置力控模式下各方向的弹性系数。
+        设置力控模式下各方向的弹性系数。TCP模式退出后，参数恢复默认值。
+        x,y,z,rx,ry,rz：取值范围[0,10000]，默认值30。
         """
-        string = ""
-        string = "FCSetStiffness("+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)
-        string = string + ')'
+        string = "FCSetStiffness({:g},{:g},{:g},{:g},{:g},{:g})".format(x,y,z,rx,ry,rz)
         return self.sendRecvMsg(string)
     
     def FCSetDamping(self, x, y, z, rx, ry, rz):
         """
-        设置力控模式下各方向的阻尼系数。
+        设置力控模式下各方向的阻尼系数。TCP模式退出后，参数恢复默认值。
+        x,y,z,rx,ry,rz：取值范围[0,1000]，默认值50。
         """
-        string = ""
-        string = "FCSetDamping("+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)
-        string = string + ')'
+        string = "FCSetDamping({:g},{:g},{:g},{:g},{:g},{:g})".format(x,y,z,rx,ry,rz)
         return self.sendRecvMsg(string)
 
     def FCOff(self):
@@ -2860,19 +2855,20 @@ class DobotApiDashboard(DobotApi):
         """
         设置各方向的力控调节速度。力控速度上限较小时，力控调节速度较慢，适合低速平缓的接触面。
         力控速度上限较大时，力控调节速度快，适合高速力控应用。需要根据具体的应用场景进行调整。
+        TCP模式退出后，参数恢复默认值。
+        x,y,z：位移方向的力控调节速度，默认值20mm/s。CRA机型取值范围：(0,安全限制TCP速度值]，其他机型：(0,300]。
+        rx,ry,rz：姿态方向的力控调节速度，默认值20°/s。CRA机型取值范围：(0,(4安全限制TCP速度值x0.001/3.14x180)]，其他机型：(0,90]。
         """
-        string = ""
-        string = "FCSetForceSpeedLimit("+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)
-        string = string + ')'
+        string = "FCSetForceSpeedLimit({:g},{:g},{:g},{:g},{:g},{:g})".format(x,y,z,rx,ry,rz)
         return self.sendRecvMsg(string)
     
     def FCSetForce(self, x, y, z, rx, ry, rz):
         """
         实时调整各方向的恒力设置。
+        x,y,z：取值范围[-200,200]，单位N。
+        rx,ry,rz：取值范围[-12,12]，单位N/m。
         """
-        string = ""
-        string = "FCSetForce("+"{:d},{:d},{:d},{:d},{:d},{:d}".format(x,y,z,rx,ry,rz)
-        string = string + ')'
+        string = "FCSetForce({:g},{:g},{:g},{:g},{:g},{:g})".format(x,y,z,rx,ry,rz)
         return self.sendRecvMsg(string)
     
     def RequestControl(self):
@@ -3293,10 +3289,20 @@ class DobotApiDashboard(DobotApi):
         return self.sendRecvMsg("StartRTOffset()")
 
     def FCCollisionSwitch(self, enable):
-        return self.sendRecvMsg("FCCollisionSwitch(enable={:d})".format(enable))
+        """
+        开启/关闭力传感器碰撞检测开关。该指令仅适用于CRAF机型。其他机型调用该指令会报错。
+        switch：0表示关闭力传感器碰撞检测功能；1表示开启力传感器碰撞检测功能。
+        """
+        return self.sendRecvMsg("FCCollisionSwitch({:d})".format(enable))
 
     def SetFCCollision(self, force, torque):
-        return self.sendRecvMsg("SetFCCollision({:f},{:f})".format(force, torque))
+        """
+        设置力传感器碰撞检测的阈值参数，当机器人末端的碰撞力或碰撞力矩超过设定的阈值后，机器人根据设置暂停或停止运动。
+        该指令仅适用于CRAF机型。其他机型调用该指令会报错。
+        force：触发碰撞检测的力阈值，单位N。CR5AF取值范围：[5,150]；CR10AF取值范围：[5,300]；CR20AF取值范围：[5,500]。
+        torque：触发碰撞检测的力矩阈值，单位N/m。CR5AF取值范围：[0.5,15]；CR10AF取值范围：[0.5,30]；CR20AF取值范围：[0.5,50]。
+        """
+        return self.sendRecvMsg("SetFCCollision({:g},{:g})".format(force, torque))
 
     def GetCnvObject(self, objId):
         """
