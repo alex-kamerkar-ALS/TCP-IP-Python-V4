@@ -278,6 +278,11 @@ class RobotUI(object):
 
         # Coord区域（右侧，与Joint区域均分）
         self.set_label(self.frame_feed, text="Coord:", rely=0.10, x=335)
+        self.combo_coord_type = ttk.Combobox(self.frame_feed, width=10)
+        self.combo_coord_type["value"] = ["用户坐标系", "工具坐标系"]
+        self.combo_coord_type.current(0)
+        self.combo_coord_type["state"] = "readonly"
+        self.combo_coord_type.place(rely=0.10, x=390, anchor=W)
         for i in range(6):
             row_y = 0.2 + i * 0.12
             self.set_button_bind(self.frame_feed, LABEL_COORD[0][i], rely=row_y, x=250)
@@ -348,11 +353,18 @@ class RobotUI(object):
     def move_jog(self, text):
         """点动控制"""
         if self.global_state["connect"] and self.robot:
-            # 检查机器人模式，错误模式下禁止操作
             if self.current_robot_mode == 9:
                 self.add_log("机器人处于错误状态，无法执行点动操作")
                 return
-            self.robot.motion.MoveJog(text)
+            if text and text[0] in ("J", "j"):
+                coord_type = CoordinateType.JOINT
+            else:
+                idx = self.combo_coord_type.current()
+                if idx == 1:
+                    coord_type = CoordinateType.TOOL
+                else:
+                    coord_type = CoordinateType.CARTESIAN
+            self.robot.motion.MoveJog(text, coord_type=coord_type)
 
     def move_stop(self, event):
         """停止点动"""
