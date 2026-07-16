@@ -34,7 +34,7 @@ def main():
             
             # ========== 获取错误码 ==========
             print("\n--- 获取错误码 ---")
-            response = robot.robot_control.get_error_id()
+            response = robot.robot_control.GetErrorID()
             print(f"原始响应: {response}")
             
             error_codes = parse_error_response(response)
@@ -48,17 +48,17 @@ def main():
             
             # ========== 获取机器人模式 ==========
             print("\n--- 获取机器人模式 ---")
-            mode = robot.robot_control.robot_mode()
+            mode = robot.robot_control.RobotMode()
             print(f"机器人模式: {mode}")
             
             # ========== 获取当前位姿 ==========
             print("\n--- 获取当前笛卡尔坐标 ---")
-            pose = robot.robot_control.get_pose()
+            pose = robot.robot_control.GetPose()
             print(f"当前位姿: {pose}")
             
             # ========== 获取关节角度 ==========
             print("\n--- 获取当前关节角度 ---")
-            angles = robot.robot_control.get_angle()
+            angles = robot.robot_control.GetAngle()
             print(f"关节角度: {angles}")
             
             # ========== 清除报警演示 ==========
@@ -66,9 +66,9 @@ def main():
             # 注意：只有在有错误时才需要清除
             if error_codes:
                 print("清除报警...")
-                robot.robot_control.clear_error()
+                robot.robot_control.ClearError()
                 # 再次检查
-                response = robot.robot_control.get_error_id()
+                response = robot.robot_control.GetErrorID()
                 error_codes = parse_error_response(response)
                 if not error_codes:
                     print("✅ 报警已清除")
@@ -78,7 +78,7 @@ def main():
             # 正解：关节角度 -> 笛卡尔坐标
             print("正解运算 (关节->笛卡尔)...")
             joints = [0, 0, 0, 0, 90, 0]
-            forward_result = robot.robot_control.positive_kin(joints)
+            forward_result = robot.robot_control.PositiveKin(joints)
             print(f"输入关节: {joints}")
             print(f"正解结果: {forward_result}")
             
@@ -87,14 +87,14 @@ def main():
             # CheckOddMovL仅支持关节变量，需要提供起点和终点关节角度
             joints_start = [0, 0, 90, 0, 0, 0]
             joints_end = [90, 30, 0, 0, 0, 0]
-            result = robot.robot_control.check_odd_movl(joints_start, joints_end)
+            result = robot.robot_control.CheckOddMovL(joints_start, joints_end)
             print(f"检查直线运动: {joints_start} -> {joints_end}")
             print(f"结果: {result}")
             
             print("\n--- 圆弧运动可达性检查 (CheckOddMovC) ---")
             # CheckOddMovC仅支持关节变量，需要提供起点、中间点和终点关节角度
             joints_via = [60, 30, 0, 0, 0, 0]
-            result = robot.robot_control.check_odd_movc(joints_start, joints_via, joints_end)
+            result = robot.robot_control.CheckOddMovC(joints_start, joints_via, joints_end)
             print(f"检查圆弧运动: {joints_start} -> {joints_via} -> {joints_end}")
             print(f"结果: {result}")
             

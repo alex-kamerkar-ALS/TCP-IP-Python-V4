@@ -18,68 +18,68 @@ def main():
             print("=" * 50)
             
             # 初始化
-            robot.robot_control.request_control()
-            robot.robot_control.clear_error()
-            robot.robot_control.enable_robot(load=1.0)
+            robot.robot_control.RequestControl()
+            robot.robot_control.ClearError()
+            robot.robot_control.EnableRobot(load=1.0)
             
             # ========== 数字输出控制 ==========
             print("\n--- 数字输出控制 (DO) ---")
             
-            # 方式1: 使用 do_on/do_off
+            # 方式1: 使用 DO(index, status)
             print("打开DO1...")
-            robot.io.do_on(1)
+            robot.io.DO(1, 1)
             time.sleep(1)
             
             print("关闭DO1...")
-            robot.io.do_off(1)
+            robot.io.DO(1, 0)
             time.sleep(1)
             
             # 方式2: 使用 do（队列指令）
             print("设置DO2为ON...")
-            robot.io.do(2, 1)
+            robot.io.DO(2, 1)
             time.sleep(1)
             
             print("设置DO2为OFF...")
-            robot.io.do(2, 0)
+            robot.io.DO(2, 0)
             time.sleep(1)
             
             # 方式3: 使用 DOInstant（立即指令）
             print("使用立即指令设置DO3...")
-            robot.io.do_instant(3, 1)
+            robot.io.DOInstant(3, 1)
             time.sleep(1)
-            robot.io.do_instant(3, 0)
+            robot.io.DOInstant(3, 0)
             time.sleep(1)
             
             # ========== 数字输入读取 ==========
             print("\n--- 数字输入读取 (DI) ---")
             for i in range(1, 5):
-                di_status = robot.io.get_di(i)
+                di_status = robot.io.DI(i)
                 print(f"DI{i} 状态: {di_status}")
             
             # ========== 数字输出状态读取 ==========
             print("\n--- 数字输出状态读取 (DO) ---")
             for i in range(1, 4):
-                do_status = robot.io.get_do(i)
+                do_status = robot.io.GetDO(i)
                 print(f"DO{i} 状态: {do_status}")
             
             # ========== 模拟输出控制 ==========
             print("\n--- 模拟输出控制 (AO) ---")
             print("设置AO1为25%...")
-            robot.io.ao(1, 25)
+            robot.io.AO(1, 25)
             time.sleep(2)
             
             print("设置AO1为75%...")
-            robot.io.ao(1, 75)
+            robot.io.AO(1, 75)
             time.sleep(2)
             
             print("设置AO1为0%...")
-            robot.io.ao(1, 0)
+            robot.io.AO(1, 0)
             time.sleep(1)
             
             # ========== 模拟输入读取 ==========
             print("\n--- 模拟输入读取 (AI) ---")
             for i in range(1, 3):
-                ai_value = robot.io.get_ai(i)
+                ai_value = robot.io.AI(i)
                 print(f"AI{i} 值: {ai_value}")
             
             # ========== 末端IO控制 ==========
@@ -87,34 +87,34 @@ def main():
             
             # 设置末端DO
             print("设置末端DO1为ON...")
-            robot.io.tool_do(1, 1)
+            robot.io.ToolDO(1, 1)
             time.sleep(1)
             
             print("设置末端DO1为OFF...")
-            robot.io.tool_do(1, 0)
+            robot.io.ToolDO(1, 0)
             time.sleep(1)
             
             # 读取末端DI
             print("读取末端DI...")
-            tool_di_status = robot.io.tool_di()
+            tool_di_status = robot.io.ToolDI(1)
             print(f"末端DI 状态: {tool_di_status}")
             
             # 设置末端工具供电（开启）
             print("\n开启末端工具供电...")
-            robot.io.set_tool_power(1)  # 1 = 开启
+            robot.io.SetToolPower(1)  # 1 = 开启
             
             # ========== 批量IO操作 ==========
             print("\n--- 批量IO操作 ---")
-            print("设置IO组0的DO为ON...")
-            robot.io.do_group(0, "{1,1,1,1}")  # group_index=0, status="{1,1,1,1}"
+            print("设置 DO1~DO4 全部为ON...")
+            robot.io.DOGroup(1, 1, 2, 1, 3, 1, 4, 1)
             time.sleep(2)
             
-            print("设置IO组0的DO为OFF...")
-            robot.io.do_group(0, "{0,0,0,0}")
+            print("设置 DO1~DO4 全部为OFF...")
+            robot.io.DOGroup(1, 0, 2, 0, 3, 0, 4, 0)
             time.sleep(1)
             
             # 下使能
-            robot.robot_control.disable_robot()
+            robot.robot_control.DisableRobot()
             
             print("\n" + "=" * 50)
             print("✅ IO控制示例完成")

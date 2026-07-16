@@ -352,12 +352,12 @@ class RobotUI(object):
             if self.current_robot_mode == 9:
                 self.add_log("机器人处于错误状态，无法执行点动操作")
                 return
-            self.robot.motion.move_jog(text)
+            self.robot.motion.MoveJog(text)
 
     def move_stop(self, event):
         """停止点动"""
         if self.global_state["connect"] and self.robot:
-            self.robot.motion.move_jog("")
+            self.robot.motion.MoveJog("")
 
     def set_button(self, master, text, rely, x, **kargs):
         self.button = Button(master, text=text, padx=5,
@@ -393,7 +393,7 @@ class RobotUI(object):
             # 断开连接
             try:
                 if self.robot:
-                    self.robot.disconnect()
+                    self.robot.Disconnect()
                     self.robot = None
                 self.add_log("断开成功")
             except Exception as e:
@@ -420,16 +420,16 @@ class RobotUI(object):
                     dashboard_port=dash_port, 
                     feedback_port=feedback_port
                 )
-                self.robot.connect()
+                self.robot.Connect()
                 
                 # 设置机器人语言
                 self.robot.error.set_language(self.current_lang)
                 
                 # 请求TCP控制模式
-                self.robot.robot_control.request_control()
+                self.robot.robot_control.RequestControl()
                 
                 # 启动状态反馈监控
-                self.robot.start_feedback_monitor()
+                self.robot.StartFeedbackMonitor()
                 
                 self.add_log("连接成功")
             except Exception as e:
@@ -462,7 +462,7 @@ class RobotUI(object):
         
         if self.global_state["enable"]:
             try:
-                response = self.robot.robot_control.disable_robot()
+                response = self.robot.robot_control.DisableRobot()
                 # 检查响应是否包含失败信息
                 if response and ("Failed" in str(response) or "Error" in str(response)):
                     self.add_log(f"下使能失败: {response}")
@@ -474,7 +474,7 @@ class RobotUI(object):
                 self.add_log(f"下使能失败: {e}")
         else:
             try:
-                response = self.robot.robot_control.enable_robot()
+                response = self.robot.robot_control.EnableRobot()
                 # 检查响应是否包含失败信息
                 if response and ("Failed" in str(response) or "Error" in str(response)):
                     self.add_log(f"使能失败: {response}")
@@ -489,7 +489,7 @@ class RobotUI(object):
         """清除错误"""
         if self.robot:
             try:
-                response = self.robot.robot_control.clear_error()
+                response = self.robot.robot_control.ClearError()
                 if response and not str(response).startswith("0,"):
                     self.add_log(f"清除错误失败: {response}")
                     return
@@ -510,7 +510,7 @@ class RobotUI(object):
         
         try:
             speed = int(self.entry_speed.get())
-            response = self.robot.robot_control.speed_factor(speed)
+            response = self.robot.robot_control.SpeedFactor(speed)
             if response and ("Failed" in str(response) or "Error" in str(response)):
                 self.add_log(f"设置速度失败: {response}")
                 return
@@ -540,7 +540,7 @@ class RobotUI(object):
             ry = float(self.entry_dict["Ry:"].get())
             rz = float(self.entry_dict["Rz:"].get())
             
-            response = self.robot.motion.movj([x, y, z, rx, ry, rz], CoordinateType.CARTESIAN)
+            response = self.robot.motion.MovJ([x, y, z, rx, ry, rz], CoordinateType.CARTESIAN)
             if response and ("Failed" in str(response) or "Error" in str(response)):
                 self.add_log(f"MovJ失败: {response}")
                 return
@@ -570,7 +570,7 @@ class RobotUI(object):
             ry = float(self.entry_dict["Ry:"].get())
             rz = float(self.entry_dict["Rz:"].get())
             
-            response = self.robot.motion.movl([x, y, z, rx, ry, rz], CoordinateType.CARTESIAN)
+            response = self.robot.motion.MovL([x, y, z, rx, ry, rz], CoordinateType.CARTESIAN)
             if response and ("Failed" in str(response) or "Error" in str(response)):
                 self.add_log(f"MovL失败: {response}")
                 return
@@ -600,7 +600,7 @@ class RobotUI(object):
             j5 = float(self.entry_dict["J5:"].get())
             j6 = float(self.entry_dict["J6:"].get())
             
-            response = self.robot.motion.movj([j1, j2, j3, j4, j5, j6], CoordinateType.JOINT)
+            response = self.robot.motion.MovJ([j1, j2, j3, j4, j5, j6], CoordinateType.JOINT)
             if response and ("Failed" in str(response) or "Error" in str(response)):
                 self.add_log(f"Joint MovJ失败: {response}")
                 return
@@ -623,13 +623,13 @@ class RobotUI(object):
             status = 1 if self.combo_status.get() == "On" else 0
             
             if status == 1:
-                response = self.robot.io.do(index, 1)
+                response = self.robot.io.DO(index, 1)
                 if response and ("Failed" in str(response) or "Error" in str(response)):
                     self.add_log(f"设置DO{index}失败: {response}")
                     return
                 self.add_log(f"DO{index} 设置为高电平")
             else:
-                response = self.robot.io.do(index, 0)
+                response = self.robot.io.DO(index, 0)
                 if response and ("Failed" in str(response) or "Error" in str(response)):
                     self.add_log(f"设置DO{index}失败: {response}")
                     return
@@ -652,7 +652,7 @@ class RobotUI(object):
                 break
 
             try:
-                status = self.robot.get_status()
+                status = self.robot.GetStatus()
                 if status:
                     # 更新速度比例
                     self.label_feed_speed["text"] = str(status.speed_scaling)

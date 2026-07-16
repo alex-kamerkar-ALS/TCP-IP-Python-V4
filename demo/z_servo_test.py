@@ -102,7 +102,7 @@ def execute_trajectory_at_frequency(robot, trajectory_points, frequency_hz: floa
         cycle_start = time.time()
 
         # 使用新SDK的ServoP接口
-        robot.motion.servo_p(target_point)
+        robot.motion.ServoP(target_point)
 
         cycle_duration = time.time() - cycle_start
         current_time = time.time()
@@ -122,7 +122,7 @@ def wait_for_robot_ready(robot, target_state=5.0, polling_interval=0.1):
         polling_interval: 轮询间隔(秒)
     """
     while True:
-        status_response = robot.robot_control.robot_mode()
+        status_response = robot.robot_control.RobotMode()
         parsed = parse_dobot_response(status_response)
 
         if parsed is None:
@@ -150,15 +150,15 @@ def main():
             print("=" * 50)
             
             # 初始化
-            robot.robot_control.request_control()
-            robot.robot_control.clear_error()
-            robot.robot_control.enable_robot(load=1.0)
+            robot.robot_control.RequestControl()
+            robot.robot_control.ClearError()
+            robot.robot_control.EnableRobot(load=1.0)
             
             # 激活用户坐标系0
-            robot.robot_control.user(0)
+            robot.robot_control.User(0)
             
             # 获取当前位置
-            pose_response = robot.robot_control.get_pose()
+            pose_response = robot.robot_control.GetPose()
             parsed_pose = parse_dobot_response(pose_response)
 
             if parsed_pose is None:
@@ -169,16 +169,16 @@ def main():
             print(f"当前位置: {current_position}")
 
             # 设置用户坐标系1（以当前位置为原点）
-            set_user_result = robot.robot_control.set_user(1, current_position)
+            set_user_result = robot.robot_control.SetUser(1, current_position)
             print(f"设置用户坐标系结果: {set_user_result}")
 
             # 切换到用户坐标系1
-            robot.robot_control.user(1)
+            robot.robot_control.User(1)
 
             # 移动到轨迹起始点（用户坐标系中的相对位置）
             start_point = [50, 0, 0, 0, 0, 0]
             print(f"\n移动到轨迹起始点: {start_point}")
-            robot.motion.movl(start_point, CoordinateType.CARTESIAN)
+            robot.motion.MovL(start_point, CoordinateType.CARTESIAN)
             time.sleep(3)
 
             # 等待机器人就绪

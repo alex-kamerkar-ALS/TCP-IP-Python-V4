@@ -82,15 +82,15 @@ ROBOT_IP = "192.168.1.100"
 # Using context manager (Recommended)
 with DobotRobot(ROBOT_IP) as robot:
     # Initialization
-    robot.robot_control.request_control()
-    robot.robot_control.clear_error()
-    robot.robot_control.enable_robot(load=1.0)
+    robot.robot_control.RequestControl()
+    robot.robot_control.ClearError()
+    robot.robot_control.EnableRobot(load=1.0)
 
     # Perform operations...
-    robot.robot_control.speed_factor(50)
+    robot.robot_control.SpeedFactor(50)
 
     # Disable robot
-    robot.robot_control.disable_robot()
+    robot.robot_control.DisableRobot()
 ```
 
 ### 2. Motion Control
@@ -100,17 +100,17 @@ from dobot_sdk import DobotRobot
 from dobot_sdk import CoordinateType
 
 with DobotRobot("192.168.1.100") as robot:
-    robot.robot_control.request_control()
-    robot.robot_control.enable_robot()
+    robot.robot_control.RequestControl()
+    robot.robot_control.EnableRobot()
 
     # Cartesian space motion
-    robot.motion.movj(
+    robot.motion.MovJ(
         pose=[400, 0, 300, 180, 0, 0],
         coord_type=CoordinateType.CARTESIAN
     )
 
     # Linear motion
-    robot.motion.movl(
+    robot.motion.MovL(
         pose=[400, 100, 300, 180, 0, 0],
         coord_type=CoordinateType.CARTESIAN
     )
@@ -122,14 +122,14 @@ with DobotRobot("192.168.1.100") as robot:
 from dobot_sdk import DobotRobot
 
 with DobotRobot("192.168.1.100") as robot:
-    robot.robot_control.enable_robot()
+    robot.robot_control.EnableRobot()
 
-    # Digital output
-    robot.io.do_on(1)    # Turn on DO1
-    robot.io.do_off(1)   # Turn off DO1
+    # Digital output (per arm SDK docs: DO(index, status))
+    robot.io.DO(1, 1)    # Turn on DO1
+    robot.io.DO(1, 0)    # Turn off DO1
 
     # Read input
-    di_status = robot.io.di(1)  # Read DI1
+    di_status = robot.io.DI(1)  # Read DI1
 ```
 
 ---
@@ -235,18 +235,18 @@ robot = DobotRobot(
 def on_connection_status(is_connected):
     print(f"Connection status: {'Connected' if is_connected else 'Disconnected'}")
 
-robot.enable_auto_reconnect(enable=True, callback=on_connection_status)
+robot.EnableAutoReconnect(enable=True, callback=on_connection_status)
 
 # Check connection status
-if robot.is_connected:
+if robot.IsConnected:
     print("Robot is connected")
 ```
 
 | Function | Description |
 |----------|-------------|
-| `robot.set_timeout(connect_timeout, receive_timeout)` | Set timeout settings |
-| `robot.enable_auto_reconnect(enable, callback)` | Enable/disable auto-reconnect |
-| `robot.is_connected` | Check connection status (property) |
+| `robot.SetTimeout(connect_timeout, receive_timeout)` | Set timeout settings |
+| `robot.EnableAutoReconnect(enable, callback)` | Enable/disable auto-reconnect |
+| `robot.IsConnected` | Check connection status (property) |
 
 **Connection Features:**
 - **Receive Timeout**: Default 10 seconds, prevents blocking on receive operations

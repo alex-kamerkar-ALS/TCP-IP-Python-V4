@@ -32,8 +32,8 @@ class ErrorController:
     通过HTTP接口获取机器人报警信息    
     示例:
         error_ctrl = ErrorController("192.168.1.100")
-        error_info = error_ctrl.get_error("zh_cn")
-        formatted_error = error_ctrl.get_error_formatted("zh_cn")
+        error_info = error_ctrl.GetError("zh_cn")
+        formatted_error = error_ctrl.GetErrorFormatted("zh_cn")
     """
     
     def __init__(self, ip: str):
@@ -45,7 +45,7 @@ class ErrorController:
         """
         self.ip = ip
     
-    def set_language(self, language: str = "zh_cn") -> bool:
+    def SetLanguage(self, language: str = "zh_cn") -> bool:
         """
         设置机器人语言
         
@@ -73,7 +73,7 @@ class ErrorController:
             print(f"设置语言失败: {e}")
             return False
     
-    def get_error(self, language: str = "zh_cn") -> Dict[str, Any]:
+    def GetError(self, language: str = "zh_cn") -> Dict[str, Any]:
         """
         获取机器人报警信息        
         Args:
@@ -98,7 +98,7 @@ class ErrorController:
         """
         try:
             # 首先设置语言
-            self.set_language(language)
+            self.SetLanguage(language)
             
             # 获取报警信息
             alarm_url = f"http://{self.ip}:22000/protocol/getAlarm"
@@ -125,7 +125,7 @@ class ErrorController:
             print(f"获取报警信息时发生未知错误 {e}")
             return {"errMsg": []}
     
-    def get_error_formatted(self, language: str = "zh_cn") -> str:
+    def GetErrorFormatted(self, language: str = "zh_cn") -> str:
         """
         获取格式化的机器人报警信息        
         Args:
@@ -133,7 +133,7 @@ class ErrorController:
         
         Returns:
             str: 格式化的报警信息字符串        """
-        error_info = self.get_error(language)
+        error_info = self.GetError(language)
         return self._format_error_messages(error_info)
     
     def _format_error_messages(self, error_info: Dict[str, Any]) -> str:
@@ -173,6 +173,11 @@ class ErrorController:
             messages.append(msg)
         
         return "\n\n".join(messages)
+    
+    # 向后兼容别名 (snake_case -> PascalCase)
+    set_language = SetLanguage
+    get_error = GetError
+    get_error_formatted = GetErrorFormatted
 
 
 def parse_error_ids(error_response: Optional[str]) -> List[int]:
@@ -229,7 +234,7 @@ def set_language(ip: str, language: str = "zh_cn") -> bool:
     Returns:
         是否设置成功
     """
-    return ErrorController(ip).set_language(language)
+    return ErrorController(ip).SetLanguage(language)
 
 
 def get_error(ip: str, language: str = "zh_cn") -> Dict[str, Any]:
@@ -243,7 +248,7 @@ def get_error(ip: str, language: str = "zh_cn") -> Dict[str, Any]:
     Returns:
         报警信息字典
     """
-    return ErrorController(ip).get_error(language)
+    return ErrorController(ip).GetError(language)
 
 
 def format_error_messages_from_http(error_info: Dict[str, Any]) -> str:

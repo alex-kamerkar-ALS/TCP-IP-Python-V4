@@ -27,9 +27,9 @@ class DobotRobot:
     越疆机器人控制主类
     示例:
         with DobotRobot("192.168.1.100") as robot:
-            robot.robot_control.enable_robot()
+            robot.robot_control.EnableRobot()
             pose = [400, 0, 300, 180, 0, 0]
-            robot.motion.movj(pose, CoordinateType.CARTESIAN)
+            robot.motion.MovJ(pose, CoordinateType.CARTESIAN)
     """
 
     def __init__(self, ip: str,
@@ -97,7 +97,7 @@ class DobotRobot:
         # 连接状态回调
         self._connection_callback: Optional[Callable[[bool], None]] = None
 
-    def set_timeout(self, connect_timeout: float = None, receive_timeout: float = None):
+    def SetTimeout(self, connect_timeout: float = None, receive_timeout: float = None):
         """
         设置超时时间
         
@@ -117,7 +117,7 @@ class DobotRobot:
         if receive_timeout is not None:
             self._receive_timeout = receive_timeout
 
-    def enable_auto_reconnect(self, enable: bool = True, callback: Callable[[bool], None] = None):
+    def EnableAutoReconnect(self, enable: bool = True, callback: Callable[[bool], None] = None):
         """
         启用/禁用自动重连功能
         
@@ -145,7 +145,7 @@ class DobotRobot:
         
         logger.info(f"自动重连{'已启用' if enable else '已禁用'}")
 
-    def connect(self, timeout: float = None):
+    def Connect(self, timeout: float = None):
         """
         连接到机器人
 
@@ -167,7 +167,7 @@ class DobotRobot:
         logger.info(f"机器人连接成功: {self.ip}")
     
     @property
-    def is_connected(self) -> bool:
+    def IsConnected(self) -> bool:
         """
         检查机器人连接状态
         
@@ -179,9 +179,9 @@ class DobotRobot:
                 (not self._feedback_conn_30005 or self._feedback_conn_30005.is_connected) and
                 (not self._feedback_conn_30006 or self._feedback_conn_30006.is_connected))
 
-    def disconnect(self):
+    def Disconnect(self):
         """断开连接"""
-        self.stop_feedback_monitor()
+        self.StopFeedbackMonitor()
         self._dashboard_conn.disconnect()
         self._feedback_conn.disconnect()
         
@@ -193,7 +193,7 @@ class DobotRobot:
             
         logger.info(f"机器人已断开连接: {self.ip}")
 
-    def get_status(self) -> Optional[RobotStatus]:
+    def GetStatus(self) -> Optional[RobotStatus]:
         """
         获取最新机器人状态
         Returns:
@@ -201,7 +201,7 @@ class DobotRobot:
         """
         return self._latest_status
 
-    def start_feedback_monitor(self, callback: Callable = None):
+    def StartFeedbackMonitor(self, callback: Callable = None):
         """
         启动状态反馈监控线程
         Args:
@@ -220,7 +220,7 @@ class DobotRobot:
         self._feedback_thread.start()
         logger.info("状态监控已启动")
 
-    def stop_feedback_monitor(self):
+    def StopFeedbackMonitor(self):
         """停止状态反馈监控"""
         self._feedback_running = False
         if self._feedback_thread:
@@ -264,15 +264,15 @@ class DobotRobot:
 
     def __enter__(self):
         """上下文管理器入口"""
-        self.connect()
+        self.Connect()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """上下文管理器出口"""
-        self.disconnect()
+        self.Disconnect()
         return False
 
-    def get_error(self, language: str = "zh_cn") -> dict:
+    def GetError(self, language: str = "zh_cn") -> dict:
         """
         获取机器人报警信息（通过HTTP接口）        
         Args:
@@ -303,9 +303,9 @@ class DobotRobot:
             }
             如果没有报警，返回{"errMsg": []}
         """
-        return self.error.get_error(language)
+        return self.error.GetError(language)
 
-    def get_error_formatted(self, language: str = "zh_cn") -> str:
+    def GetErrorFormatted(self, language: str = "zh_cn") -> str:
         """
         获取格式化的机器人报警信息（通过HTTP接口获取        
         Args:
@@ -313,8 +313,22 @@ class DobotRobot:
         
         Returns:
             str: 格式化的报警信息字符串        """
-        return self.error.get_error_formatted(language)
+        return self.error.GetErrorFormatted(language)
 
     def __del__(self):
         """析构函数"""
-        self.disconnect()
+        self.Disconnect()
+
+    # 向后兼容别名 (snake_case -> PascalCase
+    set_timeout = SetTimeout
+    enable_auto_reconnect = EnableAutoReconnect
+    connect = Connect
+    disconnect = Disconnect
+    get_status = GetStatus
+    start_feedback_monitor = StartFeedbackMonitor
+    stop_feedback_monitor = StopFeedbackMonitor
+    get_error = GetError
+    get_error_formatted = GetErrorFormatted
+    @property
+    def is_connected(self):
+        return self.IsConnected

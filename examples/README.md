@@ -58,19 +58,19 @@ def main():
     try:
         with DobotRobot(ROBOT_IP) as robot:
             # 1. 请求控制模式
-            robot.robot_control.request_control()
+            robot.robot_control.RequestControl()
             
             # 2. 清除报警
-            robot.robot_control.clear_error()
+            robot.robot_control.ClearError()
             
             # 3. 使能机器人
-            robot.robot_control.enable_robot(load=1.0)
+            robot.robot_control.EnableRobot(load=1.0)
             
             # 4. 执行操作...
             # ...
             
             # 5. 下使能
-            robot.robot_control.disable_robot()
+            robot.robot_control.DisableRobot()
             
     except Exception as e:
         print(f"错误: {e}")

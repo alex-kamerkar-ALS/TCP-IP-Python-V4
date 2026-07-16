@@ -30,32 +30,32 @@ def main():
     
     try:
         # 连接机器人（日志会自动记录连接过程）
-        robot.connect()
+        robot.Connect()
         
         # 请求控制模式
-        robot.robot_control.request_control()
+        robot.robot_control.RequestControl()
         
         # 清除报警
-        robot.robot_control.clear_error()
+        robot.robot_control.ClearError()
         
         # 使能机器人（日志会记录API调用）
-        robot.robot_control.enable_robot()
+        robot.robot_control.EnableRobot()
         
         # 设置速度（日志会记录API调用）
-        robot.robot_control.speed_factor(50)
+        robot.robot_control.SpeedFactor(50)
         
         # 运动指令（日志会记录发送的命令和响应）
         start_pose = [400, 0, 300, 180, 0, 0]
-        robot.motion.movl(start_pose, CoordinateType.CARTESIAN)
+        robot.motion.MovL(start_pose, CoordinateType.CARTESIAN)
         
         # 停止机器人
-        robot.robot_control.disable_robot()
+        robot.robot_control.DisableRobot()
         
     except Exception as e:
         logger.error(f"操作失败: {e}", exc_info=True)
     finally:
         # 断开连接（日志会记录断开过程）
-        robot.disconnect()
+        robot.Disconnect()
 
 
 if __name__ == "__main__":

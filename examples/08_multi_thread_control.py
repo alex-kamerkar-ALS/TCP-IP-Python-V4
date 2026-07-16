@@ -136,7 +136,7 @@ class RobotController:
         for idx, point in enumerate(points, 1):
             print(f"  [{idx}/{len(points)}] -> {point[:3]}")
             try:
-                self.robot.motion.movl(point, CoordinateType.CARTESIAN)
+                self.robot.motion.MovL(point, CoordinateType.CARTESIAN)
                 self.total_motion_count += 1
                 result = self._wait_for_motion_complete_with_joints(15)
                 if result:
@@ -233,7 +233,7 @@ class RobotController:
         start_time = time.time()
         
         try:
-            response = self.robot.motion.movl(test_point, CoordinateType.CARTESIAN)
+            response = self.robot.motion.MovL(test_point, CoordinateType.CARTESIAN)
             self.total_motion_count += 1
             
             stable_count = 0
@@ -303,7 +303,7 @@ class RobotController:
             while self.running:
                 target_point = point_a if count % 2 == 0 else point_b
                 try:
-                    self.robot.motion.movl(target_point, CoordinateType.CARTESIAN)
+                    self.robot.motion.MovL(target_point, CoordinateType.CARTESIAN)
                     self.total_motion_count += 1
                     
                     if count > 0 and count % 10 == 0:
@@ -344,10 +344,10 @@ class RobotController:
         """启动控制器"""
         try:
             self.robot = DobotRobot(self.ip, connect_timeout=5.0, receive_timeout=10.0)
-            self.robot.connect()
-            self.robot.robot_control.request_control()
-            self.robot.robot_control.clear_error()
-            self.robot.start_feedback_monitor(callback=self._status_callback)
+            self.robot.Connect()
+            self.robot.robot_control.RequestControl()
+            self.robot.robot_control.ClearError()
+            self.robot.StartFeedbackMonitor(callback=self._status_callback)
             self.running = True
             self.monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True)
             self.monitor_thread.start()
@@ -366,13 +366,13 @@ class RobotController:
             self.monitor_thread.join(timeout=2.0)
         
         if self.robot:
-            self.robot.stop_feedback_monitor()
+            self.robot.StopFeedbackMonitor()
             try:
-                self.robot.robot_control.disable_robot()
+                self.robot.robot_control.DisableRobot()
             except:
                 pass
             try:
-                self.robot.disconnect()
+                self.robot.Disconnect()
             except:
                 pass
         
@@ -400,12 +400,10 @@ def main(enable_motion=False, motion_type='point_by_point'):
         
         # 主线程：发送控制指令
         print("\n" + "-"*50)
-        # 上电、设置运行模式、使能
-        controller.robot.robot_control.power_on()
-        controller.robot.motion.set_run_mode(1)
-        controller.robot.robot_control.enable_robot(load=1.0)
-        controller.robot.motion.set_run_mode(1)
-        controller.robot.robot_control.speed_factor(30)
+        # 上电、使能、设置速度
+        controller.robot.robot_control.PowerOn()
+        controller.robot.robot_control.EnableRobot(load=1.0)
+        controller.robot.robot_control.SpeedFactor(30)
         
         # 运动测试
         if enable_motion:

@@ -182,17 +182,17 @@ def main():
     
     try:
         # 连接机器人
-        robot.connect()
+        robot.Connect()
         print("连接成功！")
         
         # 请求控制权
-        robot.robot_control.request_control()
+        robot.robot_control.RequestControl()
         
         # 清除错误
-        robot.robot_control.clear_error()
+        robot.robot_control.ClearError()
         
         # 启动反馈监控
-        robot.start_feedback_monitor(callback=print_status)
+        robot.StartFeedbackMonitor(callback=print_status)
         
         print("\n开始监听机器人状态...")
         print("按 Ctrl+C 停止监听\n")
@@ -209,8 +209,8 @@ def main():
         traceback.print_exc()
     finally:
         # 停止监控并断开连接
-        robot.stop_feedback_monitor()
-        robot.disconnect()
+        robot.StopFeedbackMonitor()
+        robot.Disconnect()
         print("已断开连接")
 
 

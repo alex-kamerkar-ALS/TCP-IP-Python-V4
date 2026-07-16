@@ -65,8 +65,10 @@ def test_robot_creation():
 
 def test_coordinate_type():
     """测试CoordinateType枚举"""
-    assert CoordinateType.CARTESIAN == 0
-    assert CoordinateType.JOINT == 1
+    assert CoordinateType.JOINT == 0
+    assert CoordinateType.CARTESIAN == 1
+    assert CoordinateType.USER == 1
+    assert CoordinateType.TOOL == 2
     print("CoordinateType枚举值正确")
 
 

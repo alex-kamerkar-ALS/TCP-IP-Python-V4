@@ -19,21 +19,24 @@ class IO:
 
     # ==================== 数字输出端口 ====================
 
-    def do(self, index: int, status: int) -> str:
+    def DO(self, index: int, status: int, time: float = None) -> str:
         """
         设置数字输出端口状态（队列指令）
         Args:
             index: DO端口索引 (1-based)
             status: 状态(0=Off, 1=On)
+            time: 输出持续时间(秒)。当status=1时有效，到达时间后自动变为0。
 
         Returns:
-            str: ErrorID,{ResultID},DO(index,status);
+            str: ErrorID,{ResultID},DO(index,status,time);
         """
         if status not in [0, 1]:
             raise ValueError("DO状态必须是0或1")
+        if time is not None:
+            return self._send_cmd(f"DO({index},{status},{time:.3f})")
         return self._send_cmd(f"DO({index},{status})")
 
-    def do_instant(self, index: int, status: int) -> str:
+    def DOInstant(self, index: int, status: int) -> str:
         """
         设置数字输出端口状态（立即指令）
         Args:
@@ -47,7 +50,7 @@ class IO:
             raise ValueError("DO状态必须是0或1")
         return self._send_cmd(f"DOInstant({index},{status})")
 
-    def get_do(self, index: int) -> str:
+    def GetDO(self, index: int) -> str:
         """
         获取数字输出端口状态（立即指令）
         Args:
@@ -58,102 +61,75 @@ class IO:
         """
         return self._send_cmd(f"GetDO({index})")
 
-    def do_group(self, group_index: int, status: Union[List[int], str]) -> str:
+    def DOGroup(self, *index_value_pairs) -> str:
         """
         设置多个数字输出端口状态（队列指令）
         Args:
-            group_index: IO组索引(0-3)
-            status: 端口状态列表，如[0,1,0,1] 或字符串 "{0,1,0,1}"
+            *index_value_pairs: 端口索引和状态的成对参数，如 DOGroup(4,1,6,0,2,1,7,0)
 
         Returns:
-            str: ErrorID,{ResultID},DOGroup(groupIndex,status);
+            str: ErrorID,{ResultID},DOGroup(index1,value1,index2,value2,...);
         """
-        if isinstance(status, list):
-            status_str = "{" + ",".join(str(s) for s in status) + "}"
-        else:
-            status_str = status
-        
-        return self._send_cmd(f"DOGroup({group_index},{status_str})")
+        if len(index_value_pairs) % 2 != 0:
+            raise ValueError("DOGroup参数必须是偶数个（index与value成对）")
+        params = []
+        for i in range(0, len(index_value_pairs), 2):
+            index = index_value_pairs[i]
+            value = index_value_pairs[i + 1]
+            if not isinstance(index, int):
+                raise ValueError("DOGroup的index必须是int类型")
+            if value not in [0, 1]:
+                raise ValueError("DOGroup的value必须是0或1")
+            params.append(str(index))
+            params.append(str(value))
+        return self._send_cmd(f"DOGroup({','.join(params)})")
 
-    def do_group_dec(self, group_index: int, value: int) -> str:
+    def DOGroupDEC(self, indices: Union[List[int], str], value: int) -> str:
         """
         通过赋值十进制设置多个数字输出端口状态（队列指令）
         Args:
-            group_index: IO组索引(0-3)
+            indices: 端口索引列表，如[1,2,3,4,5] 或字符串 "{1,2,3,4,5}"
             value: 十进制值
         Returns:
-            str: ErrorID,{ResultID},DOGroupDEC(groupIndex,value);
+            str: ErrorID,{ResultID},DOGroupDEC({index1,index2,...,indexN},value);
         """
-        return self._send_cmd(f"DOGroupDEC({group_index},{value})")
+        if isinstance(indices, list):
+            indices_str = "{" + ",".join(str(i) for i in indices) + "}"
+        else:
+            indices_str = indices
+        return self._send_cmd(f"DOGroupDEC({indices_str},{value})")
 
-    # ==================== 别名方法（提高易用性）====================
-
-    def do_on(self, index: int) -> str:
-        """
-        开启数字输出端口（队列指令）
-        Args:
-            index: DO端口索引 (1-based)
-        Returns:
-            str: ErrorID,{ResultID},DO(index,1);
-        """
-        return self.do(index, 1)
-
-    def do_off(self, index: int) -> str:
-        """
-        关闭数字输出端口（队列指令）
-        Args:
-            index: DO端口索引 (1-based)
-        Returns:
-            str: ErrorID,{ResultID},DO(index,0);
-        """
-        return self.do(index, 0)
-
-    def get_di(self, index: int) -> str:
-        """
-        获取DI端口的状态（立即指令）- 别名方法
-        Args:
-            index: DI端口索引 (1-based)
-        Returns:
-            str: ErrorID,{status},DI(index);
-        """
-        return self.di(index)
-
-    def get_ai(self, index: int) -> str:
-        """
-        获取AI端口的值（立即指令）- 别名方法
-        Args:
-            index: AI端口索引 (1-based)
-        Returns:
-            str: ErrorID,{value},AI(index);
-        """
-        return self.ai(index)
-
-    def get_do_group(self, group_index: int) -> str:
+    def GetDOGroup(self, *indices) -> str:
         """
         获取多个数字输出端口状态（立即指令）
         Args:
-            group_index: IO组索引(0-3)
+            *indices: 要读取的DO端口编号，如 GetDOGroup(1,2)
 
         Returns:
-            str: ErrorID,{status1,status2,...},GetDOGroup(groupIndex);
+            str: ErrorID,{status1,status2,...},GetDOGroup(index1,index2,...);
         """
-        return self._send_cmd(f"GetDOGroup({group_index})")
+        params = ",".join(str(i) for i in indices)
+        return self._send_cmd(f"GetDOGroup({params})")
 
-    def get_do_group_dec(self, group_index: int) -> str:
+    def GetDOGroupDEC(self, indices: Union[List[int], str]) -> str:
         """
         获取多个数字输出端口当前状态，返回值为十进制数（立即指令）
 
         Args:
-            group_index: IO组索引(0-3)
+            indices: 端口索引列表，如[1,2,3] 或字符串 "{1,2,3}"
 
         Returns:
-            str: ErrorID,{value},GetDOGroupDEC(groupIndex);
+            str: ErrorID,{value},GetDOGroupDEC({index1,...,indexN});
         """
-        return self._send_cmd(f"GetDOGroupDEC({group_index})")
+        if isinstance(indices, list):
+            indices_str = "{" + ",".join(str(i) for i in indices) + "}"
+        else:
+            indices_str = indices
+        return self._send_cmd(f"GetDOGroupDEC({indices_str})")
 
     # ==================== 数字输入端口 ====================
 
-    def di(self, index: int) -> str:
+    def DI(self, index: int) -> str:
         """
         获取DI端口的状态（立即指令）
         Args:
@@ -164,32 +140,37 @@ class IO:
         """
         return self._send_cmd(f"DI({index})")
 
-    def di_group(self, group_index: int) -> str:
+    def DIGroup(self, *indices) -> str:
         """
         获取多个DI端口的状态（立即指令）
         Args:
-            group_index: IO组索引(0-3)
+            *indices: 要读取的DI端口编号，如 DIGroup(4,6,2,7)
 
         Returns:
-            str: ErrorID,{status1,status2,...},DIGroup(groupIndex);
+            str: ErrorID,{status1,status2,...},DIGroup(index1,index2,...);
         """
-        return self._send_cmd(f"DIGroup({group_index})")
+        params = ",".join(str(i) for i in indices)
+        return self._send_cmd(f"DIGroup({params})")
 
-    def di_group_dec(self, group_index: int) -> str:
+    def DIGroupDEC(self, indices: Union[List[int], str]) -> str:
         """
         获取多个DI端口的状态，返回值为十进制数（队列指令）
 
         Args:
-            group_index: IO组索引(0-3)
+            indices: 端口索引列表，如[1,2] 或字符串 "{1,2}"
 
         Returns:
-            str: ErrorID,{value},DIGroupDEC(groupIndex);
+            str: ErrorID,{value},DIGroupDEC({index1,index2,...,indexN});
         """
-        return self._send_cmd(f"DIGroupDEC({group_index})")
+        if isinstance(indices, list):
+            indices_str = "{" + ",".join(str(i) for i in indices) + "}"
+        else:
+            indices_str = indices
+        return self._send_cmd(f"DIGroupDEC({indices_str})")
 
     # ==================== 模拟输出端口 ====================
 
-    def ao(self, index: int, value: float) -> str:
+    def AO(self, index: int, value: float) -> str:
         """
         设置模拟输出端口的值（队列指令）
         Args:
@@ -201,7 +182,7 @@ class IO:
         """
         return self._send_cmd(f"AO({index},{value:.2f})")
 
-    def ao_instant(self, index: int, value: float) -> str:
+    def AOInstant(self, index: int, value: float) -> str:
         """
         设置模拟输出端口的值（立即指令）
         Args:
@@ -213,7 +194,7 @@ class IO:
         """
         return self._send_cmd(f"AOInstant({index},{value:.2f})")
 
-    def get_ao(self, index: int) -> str:
+    def GetAO(self, index: int) -> str:
         """
         获取模拟输出端口的值（立即指令）
         Args:
@@ -226,7 +207,7 @@ class IO:
 
     # ==================== 模拟输入端口 ====================
 
-    def ai(self, index: int) -> str:
+    def AI(self, index: int) -> str:
         """
         获取AI端口的值（立即指令）
         Args:
@@ -239,7 +220,7 @@ class IO:
 
     # ==================== 末端数字输出端口 ====================
 
-    def tool_do(self, index: int, status: int) -> str:
+    def ToolDO(self, index: int, status: int) -> str:
         """
         设置末端数字输出端口状态（队列指令）
         Args:
@@ -253,7 +234,7 @@ class IO:
             raise ValueError("DO状态必须是0或1")
         return self._send_cmd(f"ToolDO({index},{status})")
 
-    def tool_do_instant(self, index: int, status: int) -> str:
+    def ToolDOInstant(self, index: int, status: int) -> str:
         """
         设置末端数字输出端口状态（立即指令）
         Args:
@@ -267,7 +248,7 @@ class IO:
             raise ValueError("DO状态必须是0或1")
         return self._send_cmd(f"ToolDOInstant({index},{status})")
 
-    def get_tool_do(self, index: int) -> str:
+    def GetToolDO(self, index: int) -> str:
         """
         获取末端数字输出端口状态（立即指令）
         Args:
@@ -280,39 +261,47 @@ class IO:
 
     # ==================== 末端数字输入端口 ====================
 
-    def tool_di(self) -> str:
+    def ToolDI(self, index: int) -> str:
         """
         获取末端DI端口的状态（立即指令）
+        Args:
+            index: 末端DI端口索引
         Returns:
-            str: ErrorID,{status},ToolDI();
+            str: ErrorID,{status},ToolDI(index);
         """
-        return self._send_cmd("ToolDI()")
+        return self._send_cmd(f"ToolDI({index})")
 
     # ==================== 末端模拟输入端口 ====================
 
-    def tool_ai(self) -> str:
+    def ToolAI(self, index: int) -> str:
         """
         获取末端AI端口的值（立即指令）
+        Args:
+            index: 末端AI端口索引
         Returns:
-            str: ErrorID,{value},ToolAI();
+            str: ErrorID,{value},ToolAI(index);
         """
-        return self._send_cmd("ToolAI()")
+        return self._send_cmd(f"ToolAI({index})")
 
     # ==================== 末端工具设置 ====================
 
-    def set_tool_485(self, baud: int, parity: int, data_bit: int, stop_bit: int) -> str:
+    def SetTool485(self, baud: int, parity: str = "N", stopbit: int = 1, identify: int = None) -> str:
         """
         设置末端485通信格式（立即指令）
 
         Args:
-            baud: 波特率            parity: 校验位(0-无 1-奇 2-偶)
-            data_bit: 数据位            stop_bit: 停止位
+            baud: 波特率
+            parity: 校验位("O"=奇校验, "E"=偶校验, "N"=无校验) 默认"N"
+            stopbit: 停止位 默认1
+            identify: 辨识参数（可选）
         Returns:
-            str: ErrorID,{},SetTool485(baud,parity,dataBit,stopBit);
+            str: ErrorID,{},SetTool485(baud,parity,stopbit[,identify]);
         """
-        return self._send_cmd(f"SetTool485({baud},{parity},{data_bit},{stop_bit})")
+        if identify is not None:
+            return self._send_cmd(f'SetTool485({baud},"{parity}",{stopbit},{identify})')
+        return self._send_cmd(f'SetTool485({baud},"{parity}",{stopbit})')
 
-    def set_tool_power(self, status: int) -> str:
+    def SetToolPower(self, status: int) -> str:
         """
         设置末端工具供电状态（立即指令）
         Args:
@@ -325,12 +314,19 @@ class IO:
             raise ValueError("状态必须是0或1")
         return self._send_cmd(f"SetToolPower({status})")
 
-    def set_tool_mode(self, mode: int) -> str:
+    def SetToolMode(self, mode: int, type: int = None, identify: int = None) -> str:
         """
         设置末端复用端子的模式（立即指令）
         Args:
             mode: 模式值
+            type: 类型值（可选）
+            identify: 辨识参数（可选）
         Returns:
-            str: ErrorID,{},SetToolMode(mode);
+            str: ErrorID,{},SetToolMode(mode[,type[,identify]]);
         """
-        return self._send_cmd(f"SetToolMode({mode})")
+        params = [str(mode)]
+        if type is not None:
+            params.append(str(type))
+            if identify is not None:
+                params.append(str(identify))
+        return self._send_cmd(f"SetToolMode({','.join(params)})")

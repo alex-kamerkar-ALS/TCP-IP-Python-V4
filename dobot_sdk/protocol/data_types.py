@@ -31,8 +31,8 @@ MyType = np.dtype([
     ('VRobot', np.float64),
     ('IRobot', np.float64),
     ('ProgramState', np.float64),
-    ('SafetyOIn', np.uint16),
-    ('SafetyOOut', np.uint16),
+    ('SafetyIOIn', np.uint16),
+    ('SafetyIOOut', np.uint16),
     ('reserve4', np.byte, (76,)),
     ('QTarget', np.float64, (6,)),
     ('QDTarget', np.float64, (6,)),
@@ -99,5 +99,6 @@ MyType = np.dtype([
     ('AutoManualMode', np.uint16),
     ('ExportStatus', np.uint16),
     ('SafetyState', np.byte),
-    ('reserve9', np.byte, (19,))
+    ('SafeState', np.byte),
+    ('reserve9', np.byte, (18,))
 ])

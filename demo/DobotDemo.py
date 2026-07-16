@@ -38,23 +38,23 @@ class DobotDemo:
         try:
             # 使用新SDK的上下文管理器
             self.robot = DobotRobot(self.ip)
-            self.robot.connect()
+            self.robot.Connect()
             
             # 请求TCP控制模式
-            self.robot.robot_control.request_control()
+            self.robot.robot_control.RequestControl()
             
             # 清除报警
-            self.robot.robot_control.clear_error()
+            self.robot.robot_control.ClearError()
             
             # 使能机器人
-            response = self.robot.robot_control.enable_robot()
+            response = self.robot.robot_control.EnableRobot()
             if "Failed" in response:
                 print("使能失败: 检查29999端口是否被占用")
                 return
             print("使能成功")
 
             # 启动状态反馈线程
-            self.robot.start_feedback_monitor(callback=self._feed_callback)
+            self.robot.StartFeedbackMonitor(callback=self._feed_callback)
             sleep(1)
 
             # 定义两个目标点
@@ -64,7 +64,7 @@ class DobotDemo:
             # 走点循环
             from dobot_sdk import CoordinateType
             while True:
-                status = self.robot.get_status()
+                status = self.robot.GetStatus()
                 if status:
                     self.feedData.DigitalInputs = status.digital_inputs
                     self.feedData.DigitalOutputs = status.digital_outputs
@@ -94,7 +94,7 @@ class DobotDemo:
         from dobot_sdk import CoordinateType
         
         # 执行关节运动
-        response = self.robot.motion.movj(point_list, CoordinateType.CARTESIAN)
+        response = self.robot.motion.MovJ(point_list, CoordinateType.CARTESIAN)
         print(f"MovJ: {response}")
         
         # 解析指令ID
@@ -120,7 +120,7 @@ class DobotDemo:
         """析构函数"""
         if self.robot:
             try:
-                self.robot.stop_feedback_monitor()
-                self.robot.disconnect()
+                self.robot.StopFeedbackMonitor()
+                self.robot.Disconnect()
             except Exception:
                 pass

@@ -67,25 +67,25 @@ from dobot_sdk import DobotRobot, CoordinateType
 # 连接机器人
 with DobotRobot("192.168.1.100") as robot:
     # 请求控制
-    robot.robot_control.request_control()
+    robot.robot_control.RequestControl()
     
     # 清除报警
-    robot.robot_control.clear_error()
+    robot.robot_control.ClearError()
     
     # 使能机器人
-    robot.robot_control.enable_robot()
+    robot.robot_control.EnableRobot()
     
     # 关节运动到初始位置
-    robot.motion.movj([0, 0, 90, 0, 90, 0], CoordinateType.JOINT)
+    robot.motion.MovJ([0, 0, 90, 0, 90, 0], CoordinateType.JOINT)
     
     # 笛卡尔运动
-    robot.motion.movl([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
+    robot.motion.MovL([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
     
     # 关闭DO1
-    robot.io.do(1, 0)
+    robot.io.DO(1, 0)
     
     # 获取当前位姿
-    pose = robot.robot_control.get_pose()
+    pose = robot.robot_control.GetPose()
     print(f"当前位姿: {pose}")
 ```
 
@@ -119,12 +119,12 @@ robot = DobotRobot("192.168.1.100", dashboard_port=29999, feedback_port=30004)
 
 ### 连接管理
 
-#### connect()
+#### Connect()
 
 建立与机器人的连接。
 
 ```python
-robot.connect(timeout: float = 5.0) -> None
+robot.Connect(timeout: float = 5.0) -> None
 ```
 
 **参数**:
@@ -136,42 +136,42 @@ robot.connect(timeout: float = 5.0) -> None
 **示例**:
 
 ```python
-robot.connect()
+robot.Connect()
 ```
 
-#### disconnect()
+#### Disconnect()
 
 断开与机器人的连接。
 
 ```python
-robot.disconnect() -> None
+robot.Disconnect() -> None
 ```
 
 **示例**:
 
 ```python
-robot.disconnect()
+robot.Disconnect()
 ```
 
 ### 模块接口说明
 
 > **注意**: 为保持接口清晰，DobotRobot主类不再提供快捷控制方法，请通过对应模块调用：
-> - 机器人控制: `robot.robot_control.enable_robot()` / `robot.robot_control.disable_robot()` / `robot.robot_control.clear_error()`
-> - 运动控制: `robot.motion.movj()` / `robot.motion.movl()` / `robot.motion.arc()`
-> - IO控制: `robot.io.do()` / `robot.io.di()` / `robot.io.ao()`
-> - 通讯控制: `robot.communication.modbus_create()`
-> - 插件控制: `robot.plugins.()`
+> - 机器人控制: `robot.robot_control.EnableRobot()` / `robot.robot_control.DisableRobot()` / `robot.robot_control.ClearError()`
+> - 运动控制: `robot.motion.MovJ()` / `robot.motion.MovL()` / `robot.motion.Arc()`
+> - IO控制: `robot.io.DO()` / `robot.io.DI()` / `robot.io.AO()`
+> - 通讯控制: `robot.communication.ModbusCreate()`
+> - 插件控制: `robot.plugins.FCForceMode()`
 
 详细接口请参考各模块章节。
 
 ### 状态监控
 
-#### start\_feedback\_monitor()
+#### StartFeedbackMonitor()
 
 启动状态反馈监控线程。
 
 ```python
-robot.start_feedback_monitor(callback: Callable = None) -> None
+robot.StartFeedbackMonitor(callback: Callable = None) -> None
 ```
 
 **参数**:
@@ -186,29 +186,29 @@ robot.start_feedback_monitor(callback: Callable = None) -> None
 def on_status_update(status):
     print(f"当前位置: X={status.tool_vector_actual.x}")
 
-robot.start_feedback_monitor(callback=on_status_update)
+robot.StartFeedbackMonitor(callback=on_status_update)
 ```
 
-#### stop\_feedback\_monitor()
+#### StopFeedbackMonitor()
 
 停止状态反馈监控。
 
 ```python
-robot.stop_feedback_monitor() -> None
+robot.StopFeedbackMonitor() -> None
 ```
 
 **示例**:
 
 ```python
-robot.stop_feedback_monitor()
+robot.StopFeedbackMonitor()
 ```
 
-#### get\_status()
+#### GetStatus()
 
 获取当前状态。
 
 ```python
-robot.get_status() -> Optional[RobotStatus]
+robot.GetStatus() -> Optional[RobotStatus]
 ```
 
 **返回值**: RobotStatus 对象
@@ -216,7 +216,7 @@ robot.get_status() -> Optional[RobotStatus]
 **示例**:
 
 ```python
-status = robot.get_status()
+status = robot.GetStatus()
 if status:
     print(f"速度比例: {status.speed_scaling}%")
     print(f"机器人模式: {status.robot_mode.value}")
@@ -226,9 +226,9 @@ if status:
 
 ```python
 with DobotRobot("192.168.1.100") as robot:
-    robot.robot_control.request_control()
-    robot.robot_control.clear_error()
-    robot.robot_control.enable_robot()
+    robot.robot_control.RequestControl()
+    robot.robot_control.ClearError()
+    robot.robot_control.EnableRobot()
     # 执行操作
 # 自动断开连接
 ```
@@ -250,10 +250,10 @@ CoordinateType.JOINT      # 关节角度 (j1, j2, j3, j4, j5, j6)
 
 ### 基础运动指令
 
-#### movj() - 关节运动
+#### MovJ() - 关节运动
 
 ```python
-motion.movj(pose, coord_type, user=-1, tool=-1, a=-1, v=-1, cp=-1) -> str
+motion.MovJ(pose, coord_type, user=-1, tool=-1, a=-1, v=-1, cp=-1) -> str
 ```
 
 **参数**:
@@ -272,16 +272,16 @@ motion.movj(pose, coord_type, user=-1, tool=-1, a=-1, v=-1, cp=-1) -> str
 
 ```python
 # 关节运动
-robot.motion.movj([0, 0, 90, 0, 90, 0], CoordinateType.JOINT)
+robot.motion.MovJ([0, 0, 90, 0, 90, 0], CoordinateType.JOINT)
 
 # 笛卡尔运动，带参数
-robot.motion.movj([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN, v=50)
+robot.motion.MovJ([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN, v=50)
 ```
 
-#### movl() - 直线运动
+#### MovL() - 直线运动
 
 ```python
-motion.movl(pose, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1) -> str
+motion.MovL(pose, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1) -> str
 ```
 
 **参数**:
@@ -294,38 +294,45 @@ motion.movl(pose, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-
 **示例**:
 
 ```python
-robot.motion.movl([500, 100, 200, 180, 0, 0], CoordinateType.CARTESIAN, speed=100)
+robot.motion.MovL([500, 100, 200, 180, 0, 0], CoordinateType.CARTESIAN, speed=100)
 ```
 
-#### movj\_io() - 关节运动并输出DO
+#### MovJIO() - 关节运动并输出DO
 
 ```python
-motion.movj_io(pose, do_index, do_status, coord_type, user=-1, tool=-1, a=-1, v=-1, cp=-1) -> str
+motion.MovJIO(pose, do_list, coord_type, user=-1, tool=-1, a=-1, v=-1, cp=-1) -> str
+```
+
+**参数**:
+
+| 参数     | 类型             | 说明                              |
+| ------ | -------------- | ------------------------------- |
+| do_list | list | DO输出列表，每个元素为[do_index, do_status]，支持多个DO同时输出 |
+
+**示例**:
+
+```python
+# 运动到目标点，同时打开DO1和DO2
+robot.motion.MovJIO([400, 0, 300, 180, 0, 0], [[1, 1], [2, 1]], CoordinateType.CARTESIAN)
+```
+
+#### MovLIO() - 直线运动并输出DO
+
+```python
+motion.MovLIO(pose, do_list, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1) -> str
 ```
 
 **示例**:
 
 ```python
-# 运动到目标点，同时打开DO1
-robot.motion.movj_io([400, 0, 300, 180, 0, 0], 1, 1, CoordinateType.CARTESIAN)
+# 直线运动到目标点，关闭DO1
+robot.motion.MovLIO([500, 0, 300, 180, 0, 0], [[1, 0]], CoordinateType.CARTESIAN)
 ```
 
-#### movl\_io() - 直线运动并输出DO
+#### Arc() - 圆弧插补运动
 
 ```python
-motion.movl_io(pose, do_index, do_status, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1) -> str
-```
-
-**示例**:
-
-```python
-robot.motion.movl_io([500, 0, 300, 180, 0, 0], 1, 0, CoordinateType.CARTESIAN)
-```
-
-#### arc() - 圆弧插补运动
-
-```python
-motion.arc(p1, p2, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0) -> str
+motion.Arc(p1, p2, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0) -> str
 ```
 
 **参数**:
@@ -341,13 +348,13 @@ motion.arc(p1, p2, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=
 ```python
 mid_point = [400, 100, 300, 180, 0, 0]
 end_point = [400, 200, 300, 180, 0, 0]
-robot.motion.arc(mid_point, end_point, CoordinateType.CARTESIAN)
+robot.motion.Arc(mid_point, end_point, CoordinateType.CARTESIAN)
 ```
 
-#### arc\_io() - 圆弧运动并输出DO
+#### ArcIO() - 圆弧运动并输出DO
 
 ```python
-motion.arc_io(p1, p2, do_index, do_status, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0) -> str
+motion.ArcIO(p1, p2, do_list, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0) -> str
 ```
 
 **示例**:
@@ -356,13 +363,13 @@ motion.arc_io(p1, p2, do_index, do_status, coord_type, user=-1, tool=-1, a=-1, v
 mid_point = [400, 100, 300, 180, 0, 0]
 end_point = [400, 200, 300, 180, 0, 0]
 # 圆弧运动到终点时打开DO1
-robot.motion.arc_io(mid_point, end_point, 1, 1, CoordinateType.CARTESIAN)
+robot.motion.ArcIO(mid_point, end_point, [[1, 1]], CoordinateType.CARTESIAN)
 ```
 
-#### circle() - 整圆插补运动
+#### Circle() - 整圆插补运动
 
 ```python
-motion.circle(p1, p2, count, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0) -> str
+motion.Circle(p1, p2, count, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0) -> str
 ```
 
 **参数**:
@@ -375,15 +382,15 @@ motion.circle(p1, p2, count, coord_type, user=-1, tool=-1, a=-1, v=-1, speed=-1,
 
 ```python
 # 画2圈圆
-robot.motion.circle(mid_point, end_point, 2, CoordinateType.CARTESIAN)
+robot.motion.Circle(mid_point, end_point, 2, CoordinateType.CARTESIAN)
 ```
 
 ### 伺服运动
 
-#### servo\_j() - 关节空间动态跟随
+#### ServoJ() - 关节空间动态跟随
 
 ```python
-motion.servo_j(joints, t=0.1, aheadtime=50.0, gain=500.0) -> str
+motion.ServoJ(joints, t=0.1, aheadtime=50.0, gain=500.0) -> str
 ```
 
 **参数**:
@@ -403,28 +410,28 @@ import time
 # 实时跟随示例
 for i in range(100):
     j1 = i * 0.5
-    robot.motion.servo_j([j1, 0, 90, 0, 90, 0], t=0.05)
+    robot.motion.ServoJ([j1, 0, 90, 0, 90, 0], t=0.05)
     time.sleep(0.05)
 ```
 
-#### servo\_p() - 笛卡尔空间动态跟随
+#### ServoP() - 笛卡尔空间动态跟随
 
 ```python
-motion.servo_p(pose, t=0.1, aheadtime=50.0, gain=500.0) -> str
+motion.ServoP(pose, t=0.1, aheadtime=50.0, gain=500.0) -> str
 ```
 
 **示例**:
 
 ```python
-robot.motion.servo_p([400 + i*2, 0, 300, 180, 0, 0], t=0.05)
+robot.motion.ServoP([400 + i*2, 0, 300, 180, 0, 0], t=0.05)
 ```
 
 ### 点动控制
 
-#### move\_jog() - 点动机械臂
+#### MoveJog() - 点动机械臂
 
 ```python
-motion.move_jog(axis="", coord_type=CoordinateType.JOINT, user=0, tool=0) -> str
+motion.MoveJog(axis="", coord_type=CoordinateType.JOINT, user=0, tool=0) -> str
 ```
 
 **参数**:
@@ -437,119 +444,138 @@ motion.move_jog(axis="", coord_type=CoordinateType.JOINT, user=0, tool=0) -> str
 
 ```python
 # 启动点动
-robot.motion.move_jog("X+", CoordinateType.CARTESIAN)
+robot.motion.MoveJog("X+", CoordinateType.CARTESIAN)
 
 # 停止点动
-robot.motion.move_jog()
+robot.motion.MoveJog()
 ```
 
 ### 相对运动
 
-#### rel\_movj\_tool() - 工具坐标系相对关节运动
+#### RelMovJTool() - 工具坐标系相对关节运动
 
 ```python
-motion.rel_movj_tool(offset, v=-1) -> str
+motion.RelMovJTool(offset, v=-1) -> str
 ```
 
 **示例**:
 
 ```python
 # 沿工具坐标系移动
-robot.motion.rel_movj_tool([0, 0, 0, 0, 0, 30], v=50)
+robot.motion.RelMovJTool([0, 0, 0, 0, 0, 30], v=50)
 ```
 
-#### rel\_movl\_tool() - 工具坐标系相对直线运动
+#### RelMovLTool() - 工具坐标系相对直线运动
 
 ```python
-motion.rel_movl_tool(offset, v=-1, r=-1) -> str
+motion.RelMovLTool(offset, v=-1, r=-1) -> str
 ```
 
 **示例**:
 
 ```python
 # 沿X方向移动50mm
-robot.motion.rel_movl_tool([50, 0, 0, 0, 0, 0], v=50)
+robot.motion.RelMovLTool([50, 0, 0, 0, 0, 0], v=50)
 ```
 
-#### rel\_movj\_user() - 用户坐标系相对关节运动
+#### RelMovJUser() - 用户坐标系相对关节运动
 
 ```python
-motion.rel_movj_user(offset, v=-1) -> str
+motion.RelMovJUser(offset, v=-1) -> str
 ```
 
 **示例**:
 
 ```python
 # 在用户坐标系中相对移动
-robot.motion.rel_movj_user([0, 50, 0, 0, 0, 0], v=50)
+robot.motion.RelMovJUser([0, 50, 0, 0, 0, 0], v=50)
 ```
 
-#### rel\_movl\_user() - 用户坐标系相对直线运动
+#### RelMovLUser() - 用户坐标系相对直线运动
 
 ```python
-motion.rel_movl_user(offset, v=-1, r=-1) -> str
+motion.RelMovLUser(offset, v=-1, r=-1) -> str
 ```
 
 **示例**:
 
 ```python
 # 在用户坐标系中相对直线移动
-robot.motion.rel_movl_user([50, 0, 0, 0, 0, 0], v=50)
+robot.motion.RelMovLUser([50, 0, 0, 0, 0, 0], v=50)
 ```
 
-#### rel\_joint\_movj() - 关节坐标系相对运动
+#### RelJointMovJ() - 关节坐标系相对运动
 
 ```python
-motion.rel_joint_movj(offset, v=-1) -> str
+motion.RelJointMovJ(offset, v=-1) -> str
 ```
 
 **示例**:
 
 ```python
 # J1轴相对旋转30度
-robot.motion.rel_joint_movj([30, 0, 0, 0, 0, 0], v=30)
+robot.motion.RelJointMovJ([30, 0, 0, 0, 0, 0], v=30)
 ```
 
 ### 轨迹复现
 
-#### movs() - 拟合导入轨迹
+#### MovS() - 拟合导入轨迹
 
 ```python
-motion.movs(trace_name, is_const=0, multi=1.0, sample=50, freq=0.2, user=-1, tool=-1) -> str
+# 方式1：点位列表方式（4~50个点位）
+motion.MovS([p1, p2, p3, ...], coord_type=CoordinateType.CARTESIAN, freq=-1, user=-1, tool=-1, a=-1, v=-1, speed=-1) -> str
+
+# 方式2：文件方式
+motion.MovS("trajectory.csv", coord_type=CoordinateType.CARTESIAN, freq=-1, user=-1, tool=-1, a=-1, v=-1, speed=-1) -> str
 ```
 
 **参数**:
 
-| 参数          | 类型    | 默认值 | 说明              |
-| ----------- | ----- | --- | --------------- |
-| trace\_name | str   | -   | 轨迹文件名（含后缀）      |
-| is\_const   | int   | 0   | 是否匀速（0-原速，1-匀速） |
-| multi       | float | 1.0 | 速度倍数（0.25-2）    |
-| sample      | int   | 50  | 采样间隔（ms，8-1000） |
-| freq        | float | 0.2 | 滤波系数（0-1）       |
+| 参数              | 类型                          | 默认值   | 说明                                                            |
+| --------------- | --------------------------- | ----- | ------------------------------------------------------------- |
+| trace\_or\_points | str \| Sequence[Sequence[float]] | -     | str=轨迹文件名（含后缀）；Sequence=4~50个点位，每个点位为 [x,y,z,rx,ry,rz] 或 [j1..j6] |
+| coord\_type     | CoordinateType              | CARTESIAN | 点位坐标系类型。仅点位列表方式时使用：CARTESIAN(笛卡尔)、JOINT(关节)          |
+| freq            | float                       | -1    | 滤波系数（0~1，1=关闭滤波；-1=不设置）                                       |
+| user            | int                         | -1    | 用户坐标系编号（-1=当前）                                                 |
+| tool            | int                         | -1    | 工具坐标系编号（-1=当前）                                                 |
+| a               | int                         | -1    | 加速度比例（1~100；-1=全局）                                              |
+| v               | int                         | -1    | 速度比例（1~100；-1=全局，与 speed 互斥，speed 优先）                              |
+| speed           | int                         | -1    | 目标速度 (mm/s)，与 v 互斥（优先 speed）                                     |
+
+> **说明**：`isConst/multi/sample` 等参数属于 `StartPath()` 轨迹复现指令，`MovS()` 拟合指令**不使用**这些参数。
 
 **示例**:
 
 ```python
-robot.motion.movs("trajectory.csv", is_const=1, multi=0.5)
+# 方式1：4个点位拟合（笛卡尔坐标）
+points = [
+    [100, 0, 100, 0, 0, 0],
+    [100, 20, 100, 0, 0, 0],
+    [100, 30, 100, 0, 0, 0],
+    [100, 40, 100, 0, 0, 0],
+]
+robot.motion.MovS(points, v=50, freq=0.2)
+
+# 方式2：文件拟合
+robot.motion.MovS("trajectory.csv", v=30)
 ```
 
-#### start\_path() - 复现录制轨迹
+#### StartPath() - 复现录制轨迹
 
 ```python
-motion.start_path(trace_name, is_const=0, multi=1.0, sample=50, freq=0.2, user=-1, tool=-1) -> str
+motion.StartPath(trace_name, is_const=0, multi=1.0, sample=50, freq=0.2, user=-1, tool=-1) -> str
 ```
 
 **示例**:
 
 ```python
-robot.motion.start_path("recorded_trace.csv", is_const=1, multi=0.8)
+robot.motion.StartPath("recorded_trace.csv", is_const=1, multi=0.8)
 ```
 
-#### get\_start\_pose() - 获取轨迹起点
+#### GetStartPose() - 获取轨迹起点
 
 ```python
-motion.get_start_pose(trace_name, path_type=1) -> str
+motion.GetStartPose(trace_name, path_type=1) -> str
 ```
 
 **参数**:
@@ -562,93 +588,93 @@ motion.get_start_pose(trace_name, path_type=1) -> str
 
 ```python
 # 获取拟合轨迹的起点
-response = robot.motion.get_start_pose("trajectory.csv", path_type=2)
+response = robot.motion.GetStartPose("trajectory.csv", path_type=2)
 print(f"轨迹起点: {response}")
 ```
 
 ### 坐标系偏移
 
-#### start\_rt\_offset() - 启动坐标系偏移
+#### StartRTOffset() - 启动坐标系偏移
 
 ```python
-motion.start_rt_offset(offset) -> str
+motion.StartRTOffset(offset) -> str
 
 **示例**:
 
 ```python
 # 启动偏移
-robot.motion.start_rt_offset([10, 10, 0, 0, 0, 0])
+robot.motion.StartRTOffset([10, 10, 0, 0, 0, 0])
 
 # 执行运动（带偏移）
-robot.motion.movl([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
+robot.motion.MovL([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
 
 # 结束偏移
-robot.motion.end_rt_offset()
+robot.motion.EndRTOffset()
 ```
 
-#### end\_rt\_offset() - 结束坐标系偏移
+#### EndRTOffset() - 结束坐标系偏移
 
 ```python
-motion.end_rt_offset() -> str
+motion.EndRTOffset() -> str
 ```
 
-#### offset\_para() - 设置偏移参数
+#### OffsetPara() - 设置偏移参数
 
 ```python
-motion.offset_para(freq=0.2) -> str
+motion.OffsetPara(freq=0.2) -> str
 ```
 
 **示例**:
 
 ```python
 # 设置偏移滤波系数
-robot.motion.offset_para(freq=0.5)
+robot.motion.OffsetPara(freq=0.5)
 ```
 
 ### 轨迹恢复
 
-#### set\_resume\_offset() - 设置恢复回退距离
+#### SetResumeOffset() - 设置恢复回退距离
 
 ```python
-motion.set_resume_offset(distance) -> str
+motion.SetResumeOffset(distance) -> str
 ```
 
 **示例**:
 
 ```python
-robot.motion.set_resume_offset(50)  # 回退50mm
+robot.motion.SetResumeOffset(50)  # 回退50mm
 ```
 
-#### path\_recovery() - 开始轨迹恢复
+#### PathRecovery() - 开始轨迹恢复
 
 ```python
-motion.path_recovery() -> str
+motion.PathRecovery() -> str
 ```
 
 **示例**:
 
 ```python
 # 设置回退距离后开始恢复
-robot.motion.set_resume_offset(50)
-robot.motion.path_recovery()
+robot.motion.SetResumeOffset(50)
+robot.motion.PathRecovery()
 ```
 
-#### path\_recovery\_stop() - 停止轨迹恢复
+#### PathRecoveryStop() - 停止轨迹恢复
 
 ```python
-motion.path_recovery_stop() -> str
+motion.PathRecoveryStop() -> str
 ```
 
 **示例**:
 
 ```python
-robot.motion.path_recovery_stop()
+robot.motion.PathRecoveryStop()
 ```
 
-#### path\_recovery\_status() - 查询恢复状态
+#### PathRecoveryStatus() - 查询恢复状态
 
 ```python
-motion.path_recovery_status() -> str
+motion.PathRecoveryStatus() -> str
 ```
 
 **返回值**:
@@ -660,284 +686,230 @@ motion.path_recovery_status() -> str
 **示例**:
 
 ```python
-status = robot.motion.path_recovery_status()
+status = robot.motion.PathRecoveryStatus()
 print(f"恢复状态: {status}")
 ```
 
-### 速度加速度设置
+### 速度加速度设置（robot_control模块）
 
-#### speed\_factor() - 设置全局速度比例
+#### SpeedFactor() - 设置全局速度比例
 
 ```python
-motion.speed_factor(speed) -> str
+robot_control.SpeedFactor(speed) -> str
 ```
 
 **参数**:
 
-| 参数    | 类型  | 说明          |
-| ----- | --- | ----------- |
-| speed | int | 速度比例（0-100） |
+| 参数    | 类型  | 说明            |
+| ----- | --- | ------------- |
+| speed | int | 全局运动速度比例，取值范围：\[1, 100] |
 
 **示例**:
 
 ```python
-robot.motion.speed_factor(50)  # 设置50%速度
+robot.robot_control.SpeedFactor(50)  # 设置50%全局速度
 ```
 
-#### j\_speed\_factor() - 设置关节速度比例
+#### AccJ() - 设置关节运动加速度比例
 
 ```python
-motion.j_speed_factor(joint, speed) -> str
+robot_control.AccJ(acc) -> str
 ```
+
+**参数**:
+
+| 参数  | 类型  | 说明                     |
+| --- | --- | ---------------------- |
+| acc | int | 关节加速度比例，取值范围：\[1, 100] |
 
 **示例**:
 
 ```python
-# 设置J1轴速度比例为50%
-robot.motion.j_speed_factor(1, 50)
+# 设置关节运动加速度比例为30%
+robot.robot_control.AccJ(30)
 ```
 
-#### l\_speed\_factor() - 设置直线速度比例
+#### AccL() - 设置直线和弧线运动加速度比例
 
 ```python
-motion.l_speed_factor(speed) -> str
+robot_control.AccL(acc) -> str
 ```
+
+**参数**:
+
+| 参数  | 类型  | 说明                     |
+| --- | --- | ---------------------- |
+| acc | int | 加速度比例，取值范围：\[1, 100] |
 
 **示例**:
 
 ```python
-# 设置直线运动速度比例为70%
-robot.motion.l_speed_factor(70)
-```
-
-#### acc\_j() - 设置关节加速度比例
-
-```python
-motion.acc_j(joint, acc) -> str
-```
-
-**示例**:
-
-```python
-# 设置J1轴加速度比例为30%
-robot.motion.acc_j(1, 30)
-```
-
-#### acc\_l() - 设置直线加速度比例
-
-```python
-motion.acc_l(acc) -> str
-```
-
-**示例**:
-
-```python
-# 设置直线运动加速度比例为40%
-robot.motion.acc_l(40)
+# 设置直线和弧线运动加速度比例为40%
+robot.robot_control.AccL(40)
 ```
 
 ### 坐标系设置
 
-#### set\_user() - 设置用户坐标系
+#### SetUser() - 设置用户坐标系
 
 ```python
-robot_control.set_user(index, pose) -> str
+robot_control.SetUser(index, pose, type=None) -> str
 
 **参数**:
 
-| 参数    | 类型  | 说明           |
-| ----- | --- | ------------ |
-| index | int | 用户坐标系编号（0-50） |
-| pose  | Sequence[float] | 6个坐标 [x,y,z,rx,ry,rz] |
+| 参数    | 类型  | 说明                                                                 |
+| ----- | --- | ------------------------------------------------------------------ |
+| index | int | 用户坐标系编号（1-50）                                                      |
+| pose  | Sequence[float] | 6个坐标 [x,y,z,rx,ry,rz]                                                  |
+| type  | int | 是否使坐标系改动全局生效。0: 该命令修改的坐标系仅在当前工程运行中生效。1: 该命令修改的坐标系将会被控制器保存（可选） |
 
 **示例**:
 
 ```python
-# 设置用户坐标系0
-robot.robot_control.set_user(0, [100, 0, 0, 0, 0, 0])
+# 设置用户坐标系1
+robot.robot_control.SetUser(1, [100, 0, 0, 0, 0, 0])
+
+# 设置用户坐标系1并保存到控制器
+robot.robot_control.SetUser(1, [100, 0, 0, 0, 0, 0], type=1)
 ```
 
-#### set\_tool() - 设置工具坐标系
+#### SetTool() - 设置工具坐标系
 
 ```python
-robot_control.set_tool(index, pose) -> str
+robot_control.SetTool(index, pose, type=None) -> str
+
+**参数**:
+
+| 参数    | 类型  | 说明                                                                 |
+| ----- | --- | ------------------------------------------------------------------ |
+| index | int | 工具坐标系编号（1-50）                                                      |
+| pose  | Sequence[float] | 6个坐标 [x,y,z,rx,ry,rz]                                                  |
+| type  | int | 是否使坐标系改动全局生效。0: 该命令修改的坐标系仅在当前工程运行中生效。1: 该命令修改的坐标系将会被控制器保存（可选） |
 
 **示例**:
 
 ```python
-# 设置工具坐标系0（末端工具偏移）
-robot.robot_control.set_tool(0, [0, 0, 100, 0, 0, 0])
+# 设置工具坐标系1（末端工具偏移）
+robot.robot_control.SetTool(1, [0, 0, 100, 0, 0, 0])
+
+# 设置工具坐标系1并保存到控制器
+robot.robot_control.SetTool(1, [0, 0, 100, 0, 0, 0], type=1)
 ```
 
-#### set\_work\_load() - 设置负载参数
+#### SetPayload() - 设置末端负载
 
 ```python
-motion.set_work_load(index, weight, center) -> str
+robot_control.SetPayload(load, center=None, preset_name=None) -> str
 
-**示例**:
+**参数**:
 
-```python
-robot.motion.set_work_load(0, 1.5, [0, 0, 50])
-```
-
-#### set\_payload() - 设置末端负载
-
-```python
-robot_control.set_payload(load, center=None) -> str
+| 参数         | 类型    | 说明                      |
+| ---------- | ----- | ----------------------- |
+| load       | float | 负载重量（kg）               |
+| center     | Sequence[float] | 负载重心坐标 [x,y,z]（mm）（可选） |
+| preset_name | str   | 负载预设名称，用于保存当前配置供后续调用（可选） |
 
 **示例**:
 
 ```python
 # 方式一：直接设置参数
-robot.robot_control.set_payload(1.5, [0, 0, 50])
+robot.robot_control.SetPayload(1.5, [0, 0, 50])
 
 # 方式二：只设置重量
-robot.robot_control.set_payload(1.5)
+robot.robot_control.SetPayload(1.5)
+
+# 方式三：设置负载并保存为预设
+robot.robot_control.SetPayload(1.5, [0, 0, 50], "my_payload")
 ```
 
-### 运行模式设置
+### 抱闸控制（robot_control模块）
 
-#### set\_run\_mode() - 设置运行模式
-
-```python
-motion.set_run_mode(mode) -> str
-```
-
-**参数**:
-
-| 值 | 模式   |
-| - | ---- |
-| 0 | 拖动示教 |
-| 1 | 正常运行 |
-| 2 | 模拟运行 |
-| 3 | 空载示教 |
-| 4 | 力控拖动 |
-| 5 | 协作示教 |
-| 6 | 绝对拖动 |
-| 7 | 相对拖动 |
-
-**示例**:
+#### BrakeControl() - 抱闸控制
 
 ```python
-robot.motion.set_run_mode(1)  # 正常运行模式
-```
-
-#### drag\_teach\_switch() - 拖动示教开关
-
-```python
-motion.drag_teach_switch(status) -> str
-```
-
-**示例**:
-
-```python
-robot.motion.drag_teach_switch(1)  # 开启拖动示教
-```
-
-### 抱闸控制
-
-#### brake\_control() - 抱闸控制
-
-```python
-motion.brake_control(axis, status) -> str
+robot_control.BrakeControl(axis, status) -> str
 ```
 
 **参数**:
 
-| 参数     | 类型  | 说明        |
-| ------ | --- | --------- |
-| axis   | int | 轴编号（1-6）  |
-| status | int | 0-松开，1-抱紧 |
+| 参数     | 类型  | 说明                                            |
+| ------ | --- | --------------------------------------------- |
+| axis   | int | 关节轴序号，取值范围：\[1, 6]。1表示J1轴，2表示J2轴，以此类推      |
+| status | int | 抱闸状态。0表示抱闸锁死（关节不可移动）。1表示松开抱闸（关节可移动）。 |
 
 **示例**:
 
 ```python
-robot.motion.brake_control(1, 0)  # 松开J1轴抱闸
+robot.robot_control.BrakeControl(1, 1)  # 松开J1轴抱闸
 ```
 
-### 末端控制
+### 运动控制（robot_control模块）
 
-#### tool\_voltage() - 设置末端电压
+#### Stop() - 停止运动
 
 ```python
-motion.tool_voltage(voltage) -> str
+robot_control.Stop() -> str
+```
+
+**说明**:
+该指令用于停止机器人当前已下发的运动指令队列，同时也可用于停止正在运行的脚本工程（兼容替代RunScript停止）。
+
+**示例**:
+
+```python
+robot.robot_control.Stop()
+```
+
+#### Pause() - 暂停运动
+
+```python
+robot_control.Pause() -> str
+```
+
+**说明**:
+暂停已下发的运动指令队列或者RunScript指令运行的工程。
+
+**示例**:
+
+```python
+robot.robot_control.Pause()
+```
+
+#### Continue() - 继续运动
+
+```python
+robot_control.Continue() -> str
+```
+
+**说明**:
+继续已暂停的运动指令队列或者RunScript指令运行的工程。
+
+**示例**:
+
+```python
+robot.robot_control.Continue()
+```
+
+#### EmergencyStop() - 紧急停止
+
+```python
+robot_control.EmergencyStop(mode) -> str
 ```
 
 **参数**:
 
-| 值 | 电压  |
-| - | --- |
-| 0 | 0V  |
-| 1 | 5V  |
-| 2 | 12V |
-| 3 | 24V |
+| 参数    | 类型  | 说明                              |
+| ----- | --- | ------------------------------- |
+| mode  | int | 急停操作模式。1表示按下急停，0表示松开急停 |
 
 **示例**:
 
 ```python
-robot.motion.tool_voltage(3)  # 设置24V
-```
+# 按下急停
+robot.robot_control.EmergencyStop(1)
 
-### 运动控制
-
-#### init\_pose() - 回到初始位置
-
-```python
-motion.init_pose() -> str
-```
-
-**示例**:
-
-```python
-robot.motion.init_pose()
-```
-
-#### stop() - 停止运动
-
-```python
-motion.stop() -> str
-```
-
-**示例**:
-
-```python
-robot.motion.stop()
-```
-
-#### pause() - 暂停运动
-
-```python
-motion.pause() -> str
-```
-
-**示例**:
-
-```python
-robot.motion.pause()
-```
-
-#### continue\_motion() - 继续运动
-
-```python
-motion.continue_motion() -> str
-```
-
-**示例**:
-
-```python
-robot.motion.continue_motion()
-```
-
-#### emergency\_stop() - 紧急停止
-
-```python
-motion.emergency_stop() -> str
-```
-
-**示例**:
-
-```python
-robot.motion.emergency_stop()
+# 松开急停
+robot.robot_control.EmergencyStop(0)
 ```
 
 ***
@@ -948,55 +920,57 @@ robot.motion.emergency_stop()
 
 ### 数字输出
 
-#### do() - 设置数字输出（队列指令）
+#### DO() - 设置数字输出（队列指令）
 
 ```python
-io.do(index, status) -> str
+io.DO(index, status, time=None) -> str
 ```
 
 **参数**:
 
-| 参数     | 类型  | 说明           |
-| ------ | --- | ------------ |
-| index  | int | DO端口索引（1-64） |
-| status | int | 0-Off，1-On   |
+| 参数     | 类型    | 说明                                        |
+| ------ | ----- | ----------------------------------------- |
+| index  | int   | DO端口索引（1-64）                               |
+| status | int   | 0-Off，1-On                                  |
+| time   | float | 输出持续时间（秒），当status=1时有效，到达时间后自动变为0（可选）     |
 
 **示例**:
 
 ```python
-robot.io.do(1, 1)  # 打开DO1
-robot.io.do(1, 0)  # 关闭DO1
+robot.io.DO(1, 1)           # 打开DO1
+robot.io.DO(1, 0)           # 关闭DO1
+robot.io.DO(1, 1, 2.0)      # 打开DO1，持续2秒后自动关闭
 ```
 
-#### do\_instant() - 设置数字输出（立即指令）
+#### DOInstant() - 设置数字输出（立即指令）
 
 ```python
-io.do_instant(index, status) -> str
-```
-
-**示例**:
-
-```python
-robot.io.do_instant(1, 1)
-```
-
-#### get\_do() - 获取数字输出状态
-
-```python
-io.get_do(index) -> str
+io.DOInstant(index, status) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_do(1)
+robot.io.DOInstant(1, 1)
+```
+
+#### GetDO() - 获取数字输出状态
+
+```python
+io.GetDO(index) -> str
+```
+
+**示例**:
+
+```python
+response = robot.io.GetDO(1)
 print(response)  # ErrorID,{status},GetDO(1);
 ```
 
-#### do\_group() - 设置多个数字输出
+#### DOGroup() - 设置多个数字输出
 
 ```python
-io.do_group(group_index, status) -> str
+io.DOGroup(group_index, status) -> str
 ```
 
 **参数**:
@@ -1010,79 +984,88 @@ io.do_group(group_index, status) -> str
 
 ```python
 # 设置第0组（DO1-DO4）
-robot.io.do_group(0, [1, 0, 1, 0])
+robot.io.DOGroup(0, [1, 0, 1, 0])
 ```
 
-#### do\_group\_dec() - 十进制设置DO组
+#### DOGroupDEC() - 十进制设置DO组
 
 ```python
-io.do_group_dec(group_index, value) -> str
-```
-
-**示例**:
-
-```python
-robot.io.do_group_dec(0, 5)  # 二进制 0101
-```
-
-#### get\_do\_group() - 获取DO组状态
-
-```python
-io.get_do_group(group_index) -> str
+io.DOGroupDEC(group_index, value) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_do_group(0)
+robot.io.DOGroupDEC(0, 5)  # 二进制 0101
+```
+
+#### GetDOGroup() - 获取DO组状态
+
+```python
+io.GetDOGroup(group_index) -> str
+```
+
+**示例**:
+
+```python
+response = robot.io.GetDOGroup(0)
 print(f"DO组状态: {response}")
 ```
 
 ### 数字输入
 
-#### get\_di() - 获取数字输入状态
+#### DI() - 获取数字输入状态
 
 ```python
-io.get_di(index) -> str
+io.DI(index) -> str
+```
+
+**参数**:
+
+| 参数    | 类型  | 说明                                                                                                |
+| ----- | --- | ------------------------------------------------------------------------------------------------- |
+| index | int | DI端子的编号。取值范围：\[1, MAX]或\[100, 1000]。MAX代表当前控制柜的DI范围。当取值范围为\[100, 1000]时，需要有拓展IO模块的硬件支持。 |
+
+**返回值格式**: `ErrorID,{value},DI(index);`
+- value表示DI端子的状态，0为关闭，1为打开。
+
+**示例**:
+
+```python
+response = robot.io.DI(1)
+```
+
+#### DIGroup() - 等待数字输入组
+
+```python
+io.DIGroup(group_index, status) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_di(1)
+robot.io.DIGroup(0, [1, 1, 0, 0])
 ```
 
-#### di\_group() - 等待数字输入组
+#### DIGroupDEC() - 获取DI组状态（十进制）
 
 ```python
-io.di_group(group_index, status) -> str
-```
-
-**示例**:
-
-```python
-robot.io.di_group(0, [1, 1, 0, 0])
-```
-
-#### get\_di\_group() - 获取DI组状态
-
-```python
-io.get_di_group(group_index) -> str
+io.DIGroupDEC(group_index) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_di_group(0)
-print(f"DI组状态: {response}")
+response = robot.io.DIGroupDEC(0)
+print(f"DI组状态(十进制): {response}")
 ```
 
 ### 模拟IO
 
-#### set\_ao() - 设置模拟输出
+#### AO() - 设置模拟输出
 
 ```python
-io.set_ao(index, value) -> str
+io.AO(index, value) -> str
 ```
 
 **参数**:
@@ -1095,72 +1078,80 @@ io.set_ao(index, value) -> str
 **示例**:
 
 ```python
-robot.io.set_ao(1, 50)  # 输出5V
+robot.io.AO(1, 50)  # 输出5V
 ```
 
-#### get\_ao() - 获取模拟输出
+#### GetAO() - 获取模拟输出
 
 ```python
-io.get_ao(index) -> str
+io.GetAO(index) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_ao(1)
+response = robot.io.GetAO(1)
 print(f"AO1输出值: {response}")
 ```
 
-#### get\_ai() - 获取模拟输入
+#### AI() - 获取模拟输入
 
 ```python
-io.get_ai(index) -> str
+io.AI(index) -> str
 ```
+
+**参数**:
+
+| 参数    | 类型  | 说明                                          |
+| ----- | --- | ------------------------------------------- |
+| index | int | AI端子的编号。取值范围：\[1, MAX]。不同控制柜的AI资源数量不一样。 |
+
+**返回值格式**: `ErrorID,{value},AI(index);`
 
 **示例**:
 
 ```python
-response = robot.io.get_ai(1)
+response = robot.io.AI(1)
 print(f"AI1输入值: {response}")
 ```
 
 ### 末端IO
 
-#### set\_end\_do() - 设置末端数字输出
+#### ToolDO() - 设置末端数字输出
 
 ```python
-io.set_end_do(index, status) -> str
+io.ToolDO(index, status) -> str
 ```
 
 **示例**:
 
 ```python
-robot.io.set_end_do(1, 1)
+robot.io.ToolDO(1, 1)
 ```
 
-#### get\_end\_di() - 获取末端数字输入
+#### ToolDI() - 获取末端数字输入
 
 ```python
-io.get_end_di(index) -> str
+io.ToolDI(index) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_end_di(1)
+response = robot.io.ToolDI(1)
 print(f"末端DI1状态: {response}")
 ```
 
-#### get\_end\_ai() - 获取末端模拟输入
+#### ToolAI() - 获取末端模拟输入
 
 ```python
-io.get_end_ai(index) -> str
+io.ToolAI(index) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.io.get_end_ai(1)
+response = robot.io.ToolAI(1)
 print(f"末端AI1输入值: {response}")
 ```
 
@@ -1172,50 +1163,50 @@ print(f"末端AI1输入值: {response}")
 
 ### 控制模式
 
-#### request\_control() - 请求TCP控制模式
+#### RequestControl() - 请求TCP控制模式
 
 ```python
-robot_control.request_control() -> str
+robot_control.RequestControl() -> str
 ```
 
 **示例**:
 
 ```python
-robot.robot_control.request_control()
+robot.robot_control.RequestControl()
 ```
 
 ### 电源控制
 
-#### power\_on() - 机器人上电
+#### PowerOn() - 机器人上电
 
 ```python
-robot_control.power_on() -> str
+robot_control.PowerOn() -> str
 ```
 
 **示例**:
 
 ```python
-robot.robot_control.power_on()
+robot.robot_control.PowerOn()
 ```
 
-#### power\_off() - 机器人下电
+#### DisableRobot() - 机器人下使能（下电）
 
 ```python
-robot_control.power_off() -> str
+robot_control.DisableRobot() -> str
 ```
 
 **示例**:
 
 ```python
-robot.robot_control.power_off()
+robot.robot_control.DisableRobot()
 ```
 
 ### 状态查询
 
-#### get\_error\_id() - 获取错误码
+#### GetErrorID() - 获取错误码
 
 ```python
-robot_control.get_error_id() -> str
+robot_control.GetErrorID() -> str
 ```
 
 **返回值格式**: `ErrorID,{[error1,error2,...]},GetErrorID();`
@@ -1223,14 +1214,14 @@ robot_control.get_error_id() -> str
 **示例**:
 
 ```python
-response = robot.robot_control.get_error_id()
+response = robot.robot_control.GetErrorID()
 print(response)  # 0,{[1537,2048]},GetErrorID();
 ```
 
-#### get\_robot\_mode() - 获取机器人模式
+#### RobotMode() - 获取机器人模式
 
 ```python
-robot_control.get_robot_mode() -> str
+robot_control.RobotMode() -> str
 ```
 
 **返回值**:
@@ -1246,155 +1237,200 @@ robot_control.get_robot_mode() -> str
 **示例**:
 
 ```python
-mode = robot.robot_control.get_robot_mode()
+mode = robot.robot_control.RobotMode()
 print(f"机器人模式: {mode}")
 ```
 
-#### get\_pose() - 获取当前位姿
+#### GetPose() - 获取当前位姿
 
 ```python
-robot_control.get_pose(user=-1, tool=-1) -> str
+robot_control.GetPose(user=-1, tool=-1) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.robot_control.get_pose()
+response = robot.robot_control.GetPose()
 print(response)  # ErrorID,{x,y,z,rx,ry,rz},GetPose();
 ```
 
-#### get\_joint\_angle() - 获取关节角度
+#### GetAngle() - 获取关节角度
 
 ```python
-robot_control.get_joint_angle() -> str
+robot_control.GetAngle() -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.robot_control.get_joint_angle()
-print(response)  # ErrorID,{j1,j2,j3,j4,j5,j6},GetJointAngle();
+response = robot.robot_control.GetAngle()
+print(response)  # ErrorID,{j1,j2,j3,j4,j5,j6},GetAngle();
 ```
 
-#### get\_speed() - 获取当前速度
+#### GetSpeed() - 获取当前速度
+
+注：该指令在当前固件版本中未单独提供，速度信息可通过30004端口实时反馈的SpeedScaling字段获取（robot.GetStatus().speed_scaling）
 
 ```python
-robot_control.get_speed() -> str
+robot_control.GetSpeed() -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.robot_control.get_speed()
-print(f"当前速度: {response}")
+# 通过状态反馈获取速度比例
+status = robot.GetStatus()
+if status:
+    print(f"当前速度比例: {status.speed_scaling}%")
 ```
 
 ### 运动学计算
 
-#### inverse\_kinematic() - 逆解计算
+#### InverseKin() - 逆解计算
 
 ```python
-robot_control.inverse_kinematic(pose, user=-1, tool=-1, use_joint_near=-1, joint_near=None) -> str
+robot_control.InverseKin(pose, use_joint_near=0, joint_near=None, user=-1, tool=-1) -> str
 ```
+
+**参数**:
+
+| 参数          | 类型           | 说明                                               |
+| ----------- | ------------ | ------------------------------------------------ |
+| pose        | Sequence[float] | 6个笛卡尔坐标 [x,y,z,rx,ry,rz]                             |
+| use_joint_near | int          | 是否使用关节接近度约束。0: 不使用。1: 使用                           |
+| joint_near  | Sequence[float] | 关节接近度参考值 [j1,j2,j3,j4,j5,j6]，当use_joint_near为1时生效（可选） |
+| user        | int          | 用户坐标系编号。默认为-1，表示当前用户坐标系（可选）                    |
+| tool        | int          | 工具坐标系编号。默认为-1，表示当前工具坐标系（可选）                    |
 
 **示例**:
 
 ```python
 pose = [400, 0, 300, 180, 0, 0]
-response = robot.robot_control.inverse_kinematic(pose)
+response = robot.robot_control.InverseKin(pose)
+
+# 使用关节接近度约束
+response = robot.robot_control.InverseKin(pose, use_joint_near=1, joint_near=[0, 0, 90, 0, 90, 0])
 ```
 
-#### forward\_kinematic() - 正解计算
+#### PositiveKin() - 正解计算
 
 ```python
-robot_control.forward_kinematic(joints) -> str
+robot_control.PositiveKin(joints, user=-1, tool=-1) -> str
 ```
+
+**参数**:
+
+| 参数    | 类型           | 说明                                   |
+| ----- | ------------ | ------------------------------------ |
+| joints | Sequence[float] | 6个关节角度 [j1,j2,j3,j4,j5,j6]                 |
+| user  | int          | 用户坐标系编号。默认为-1，表示当前用户坐标系（可选）        |
+| tool  | int          | 工具坐标系编号。默认为-1，表示当前工具坐标系（可选）        |
 
 **示例**:
 
 ```python
 joints = [0, 0, 90, 0, 90, 0]
-response = robot.robot_control.forward_kinematic(joints)
-```
-
-#### check\_pose() - 可达性检查
-
-```python
-robot_control.check_pose(pose, user=-1, tool=-1, is_joint=-1, joints=None) -> str
-```
-
-**返回值**:
-
-- 0: 不可达
-- 1: 可达
-
-**示例**:
-
-```python
-pose = [400, 0, 300, 180, 0, 0]
-response = robot.robot_control.check_pose(pose)
+response = robot.robot_control.PositiveKin(joints)
 ```
 
 ### 脚本控制
 
-#### run\_script() - 运行脚本
+#### RunScript() - 运行脚本
 
 ```python
-robot_control.run_script(script_name) -> str
+robot_control.RunScript(script_name) -> str
 ```
 
 **示例**:
 
 ```python
-robot.robot_control.run_script("test.lua")
+robot.robot_control.RunScript("test.lua")
 ```
 
-#### stop\_script() - 停止脚本
+#### Stop() - 停止运动或停止脚本运行
 
 ```python
-robot_control.stop_script() -> str
+robot_control.Stop() -> str
 ```
+
+**说明**:
+该指令用于停止机器人当前的运动，同时也可用于停止正在运行的脚本工程（兼容替代RunScript停止）。
 
 **示例**:
 
 ```python
-robot.robot_control.stop_script()
+# 停止当前运动或脚本
+robot.robot_control.Stop()
 ```
 
-### 日志控制
+### 日志导出
 
-#### set\_log\_level() - 设置日志级别
+#### LogExportUSB() - 将机器人日志导出至U盘
 
 ```python
-robot_control.set_log_level(level) -> str
+robot_control.LogExportUSB(range) -> str
 ```
 
 **参数**:
 
-| 值 | 级别 |
-| - | -- |
-| 0 | 关闭 |
-| 1 | 错误 |
-| 2 | 警告 |
-| 3 | 信息 |
-| 4 | 调试 |
+| 参数    | 类型  | 说明                                                                  |
+| ----- | --- | ------------------------------------------------------------------- |
+| range | int | （必选）日志导出范围。 0：导出logs/all 和logs/user文件夹的内容。 1：导出logs文件夹所有内容。仅允许取值 0 或 1。 |
+
+**返回值格式**: `ErrorID,{},LogExportUSB(range);`
+
+**说明**:
+- 导出日志时建议只插入一个U盘，避免导出失败。
+- 如果U盘包含多个分区，日志会导出至第一个分区。
+- 请勿在导出过程中拔出U盘，否则可能导致文件损坏。
+- 该指令下发后立即返回，请通过 GetExportStatus 获取日志导出状态。
 
 **示例**:
 
 ```python
-robot.robot_control.set_log_level(3)  # 信息级别
+# 导出logs/all 和 logs/user 文件夹的内容
+robot.robot_control.LogExportUSB(0)
+
+# 导出 logs 文件夹所有内容
+robot.robot_control.LogExportUSB(1)
 ```
 
-#### get\_log() - 获取日志
+#### GetExportStatus() - 获取日志导出状态
 
 ```python
-robot_control.get_log(count) -> str
+robot_control.GetExportStatus() -> str
 ```
+
+**返回值格式**: `ErrorID,{status},GetExportStatus();`
+
+**返回值 status 说明**:
+
+| 值  | 状态                 |
+| -- | ------------------ |
+| 0  | 未开始导出              |
+| 1  | 导出中                |
+| 2  | 导出完成               |
+| 3  | 导出失败，找不到U盘         |
+| 4  | 导出失败，U盘空间不足        |
+| 5  | 导出失败，导出过程中U盘被拔出     |
+
+**说明**:
+导出完成和导出失败的状态会保持到下次用户使用导出功能。
 
 **示例**:
 
 ```python
-response = robot.robot_control.get_log(10)
+import time
+
+# 启动导出
+robot.robot_control.LogExportUSB(0)
+
+# 轮询导出状态
+while True:
+    status_resp = robot.robot_control.GetExportStatus()
+    print(f"导出状态: {status_resp}")
+    # 解析状态判断是否完成
+    time.sleep(1)
 ```
 
 ***
@@ -1405,10 +1441,10 @@ response = robot.robot_control.get_log(10)
 
 ### Modbus 主站
 
-#### modbus\_create() - 创建Modbus主站
+#### ModbusCreate() - 创建Modbus主站
 
 ```python
-communication.modbus_create(ip, port, slave_id, is_rtu=0) -> str
+communication.ModbusCreate(ip, port, slave_id, is_rtu=0) -> str
 ```
 
 **参数**:
@@ -1423,13 +1459,13 @@ communication.modbus_create(ip, port, slave_id, is_rtu=0) -> str
 **示例**:
 
 ```python
-response = robot.communication.modbus_create("192.168.1.10", 502, 1)
+response = robot.communication.ModbusCreate("192.168.1.10", 502, 1)
 ```
 
-#### modbus\_rtu\_create() - 创建RTU主站
+#### ModbusRTUCreate() - 创建RTU主站
 
 ```python
-communication.modbus_rtu_create(slave_id, baud, parity="E", data_bit=8, stop_bit=1) -> str
+communication.ModbusRTUCreate(slave_id, baud, parity="E", data_bit=8, stop_bit=1) -> str
 ```
 
 **参数**:
@@ -1441,98 +1477,144 @@ communication.modbus_rtu_create(slave_id, baud, parity="E", data_bit=8, stop_bit
 **示例**:
 
 ```python
-robot.communication.modbus_rtu_create(1, 19200, "N", 8, 1)
+robot.communication.ModbusRTUCreate(1, 19200, "N", 8, 1)
 ```
 
-#### modbus\_close() - 关闭Modbus连接
+#### ModbusClose() - 关闭Modbus连接
 
 ```python
-communication.modbus_close(index) -> str
+communication.ModbusClose(index) -> str
 ```
 
 **示例**:
 
 ```python
-robot.communication.modbus_close(0)
+robot.communication.ModbusClose(0)
 ```
 
 ### 寄存器读写
 
-#### get\_in\_bits() - 读取触点寄存器
+#### GetInBits() - 读取触点寄存器
 
 ```python
-communication.get_in_bits(index, addr, count) -> str
+communication.GetInBits(index, addr, count) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.communication.get_in_bits(0, 0, 8)
+response = robot.communication.GetInBits(0, 0, 8)
 print(f"触点寄存器: {response}")
 ```
 
-#### get\_coils() - 读取线圈寄存器
+#### GetCoils() - 读取线圈寄存器
 
 ```python
-communication.get_coils(index, addr, count) -> str
+communication.GetCoils(index, addr, count) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.communication.get_coils(0, 0, 8)
+response = robot.communication.GetCoils(0, 0, 8)
 print(f"线圈寄存器: {response}")
 ```
 
-#### set\_coils() - 写入线圈寄存器
+#### SetCoils() - 写入线圈寄存器
 
 ```python
-communication.set_coils(index, addr, count, values) -> str
+communication.SetCoils(index, addr, count, values) -> str
 ```
 
 **示例**:
 
 ```python
-robot.communication.set_coils(0, 0, 4, [1, 0, 1, 0])
+robot.communication.SetCoils(0, 0, 4, [1, 0, 1, 0])
 ```
 
-#### get\_input\_registers() - 读取输入寄存器
+#### GetInRegs() - 读取输入寄存器
 
 ```python
-communication.get_input_registers(index, addr, count) -> str
+communication.GetInRegs(index, addr, count) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.communication.get_input_registers(0, 0, 4)
+response = robot.communication.GetInRegs(0, 0, 4)
 print(f"输入寄存器: {response}")
 ```
 
-#### get\_holding\_registers() - 读取保持寄存器
+#### GetHoldRegs() - 读取保持寄存器
 
 ```python
-communication.get_holding_registers(index, addr, count) -> str
+communication.GetHoldRegs(index, addr, count) -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.communication.get_holding_registers(0, 0, 4)
+response = robot.communication.GetHoldRegs(0, 0, 4)
 print(f"保持寄存器: {response}")
 ```
 
-#### set\_holding\_registers() - 写入保持寄存器
+#### SetHoldRegs() - 写入保持寄存器
 
 ```python
-communication.set_holding_registers(index, addr, count, values) -> str
+communication.SetHoldRegs(index, addr, count, values) -> str
 ```
 
 **示例**:
 
 ```python
-robot.communication.set_holding_registers(0, 0, 2, [100, 200])
+robot.communication.SetHoldRegs(0, 0, 2, [100, 200])
 ```
+
+#### SetSingleCoil() - 写入单个线圈寄存器（V4.6.6新增）
+
+```python
+communication.SetSingleCoil(index, addr, value) -> str
+```
+
+**参数**:
+
+| 参数    | 类型  | 说明                     |
+| ----- | --- | ---------------------- |
+| index | int | Modbus主站索引（0-9）         |
+| addr  | int | 线圈寄存器地址                 |
+| value | int | 写入值，0-断开，1-接通            |
+
+**示例**:
+
+```python
+# 接通地址0的单个线圈
+robot.communication.SetSingleCoil(0, 0, 1)
+
+# 断开地址5的单个线圈
+robot.communication.SetSingleCoil(0, 5, 0)
+```
+
+#### SetSingleHoldReg() - 写入单个保持寄存器（V4.6.6新增）
+
+```python
+communication.SetSingleHoldReg(index, addr, val) -> str
+```
+
+**参数**:
+
+| 参数    | 类型  | 说明                   |
+| ----- | --- | -------------------- |
+| index | int | Modbus主站索引（0-9）        |
+| addr  | int | 保持寄存器地址              |
+| val   | int | 写入的整数值（U16：16位无符号整数） |
+
+**示例**:
+
+```python
+# 向地址1写入值200
+robot.communication.SetSingleHoldReg(0, 1, 200)
+```
+
 
 ***
 
@@ -1542,34 +1624,34 @@ robot.communication.set_holding_registers(0, 0, 2, [100, 200])
 
 ### 力传感器
 
-#### enable\_ft\_sensor() - 开启/关闭力传感器
+#### EnableFTSensor() - 开启/关闭力传感器
 
 ```python
-plugins.enable_ft_sensor(status) -> str
+plugins.EnableFTSensor(status) -> str
 ```
 
 **示例**:
 
 ```python
-robot.plugins.enable_ft_sensor(1)  # 开启
+robot.plugins.EnableFTSensor(1)  # 开启
 ```
 
-#### six\_force\_home() - 力传感器回零
+#### SixForceHome() - 力传感器回零
 
 ```python
-plugins.six_force_home() -> str
+plugins.SixForceHome() -> str
 ```
 
 **示例**:
 
 ```python
-robot.plugins.six_force_home()
+robot.plugins.SixForceHome()
 ```
 
-#### get\_force() - 获取力传感器数值
+#### GetForce() - 获取力传感器数值
 
 ```python
-plugins.get_force(tool=-1) -> str
+plugins.GetForce(tool=-1) -> str
 ```
 
 **返回值格式**: `ErrorID,{fx,fy,fz,frx,fry,frz},GetForce();`
@@ -1577,27 +1659,38 @@ plugins.get_force(tool=-1) -> str
 **示例**:
 
 ```python
-response = robot.plugins.get_force()
+response = robot.plugins.GetForce()
 ```
 
 ### 力控拖拽模式
 
-#### force\_drive\_mode() - 进入力控拖拽模式
+#### ForceDriveMode() - 进入力控拖拽模式
 
 ```python
-plugins.force_drive_mode(status) -> str
+plugins.ForceDriveMode(direction, user=-1) -> str
 ```
+
+**参数**:
+
+| 参数        | 类型            | 说明                                                                                                          |
+| --------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| direction | Sequence[int] | 6个方向的拖拽开关 [x,y,z,rx,ry,rz]，0表示该方向不能拖拽，1表示该方向可以拖拽。例如：[1,1,1,1,1,1]表示所有方向均可拖拽 |
+| user      | int           | （可选）用户坐标系编号，取值范围[0,50]，不指定时表示不参考用户坐标系                                                          |
 
 **示例**:
 
 ```python
-robot.plugins.force_drive_mode(1)  # 进入拖拽模式
+# 进入力控拖拽模式，所有方向均可拖拽，参考用户坐标系1
+robot.plugins.ForceDriveMode([1, 1, 1, 1, 1, 1], user=1)
+
+# 仅XYZ轴方向可拖拽
+robot.plugins.ForceDriveMode([1, 1, 1, 0, 0, 0])
 ```
 
-#### force\_drive\_speed() - 设置拖拽速度
+#### ForceDriveSpeed() - 设置拖拽速度
 
 ```python
-plugins.force_drive_speed(speed) -> str
+plugins.ForceDriveSpeed(speed) -> str
 ```
 
 **参数**:
@@ -1609,157 +1702,352 @@ plugins.force_drive_speed(speed) -> str
 **示例**:
 
 ```python
-robot.plugins.force_drive_speed(50)
+robot.plugins.ForceDriveSpeed(50)
 ```
 
 ### 力控模式
 
-#### fc\_force\_mode() - 开启力控模式
+#### FCForceMode() - 开启力控模式
 
 ```python
-plugins.fc_force_mode(pose, force, reference=-1, user=-1, tool=-1) -> str
+plugins.FCForceMode(direction, force, reference=0, user=-1, tool=-1) -> str
 ```
 
 **参数**:
 
-| 参数        | 类型           | 说明                |
-| --------- | ------------ | ----------------- |
-| pose      | list\[float] | 6个方向的刚度系数         |
-| force     | list\[float] | 6个方向的目标力          |
-| reference | int          | 参考坐标系（-1-工具，1-用户） |
+| 参数        | 类型            | 说明                                                                                                                                                                                   |
+| --------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| direction | Sequence[int] | 6个方向的力控开关 [x,y,z,rx,ry,rz]，1表示开启，0表示关闭                                                                                                                                                      |
+| force     | Sequence[float] | 6个方向的目标力 [fx,fy,fz,frx,fry,frz]。位移方向目标力范围[-200,200]N，姿态方向目标力范围[-12,12]N/m。目标力为0时处于柔顺模式                                                                                                                   |
+| reference | int           | （可选）参考坐标系类型。0-工具坐标系（默认），1-用户坐标系                                                                                                                                                                        |
+| user      | int           | （可选）用户坐标系编号(0-50)，默认为-1表示当前用户坐标系                                                                                                                                                                             |
+| tool      | int           | （可选）工具坐标系编号(0-50)，默认为-1表示当前工具坐标系                                                                                                                                                                             |
 
 **示例**:
 
 ```python
-pose = [1, 1, 0, 0, 0, 0]      # X,Y方向刚度
-force = [10, 10, 0, 0, 0, 0]   # X,Y方向目标力
-robot.plugins.fc_force_mode(pose, force)
+direction = [1, 1, 0, 0, 0, 0]  # X,Y方向开启力控
+force = [100, 100, 0, 0, 0, 0]   # X,Y方向目标力100N
+robot.plugins.FCForceMode(direction, force, reference=1, user=1)
 ```
 
-#### fc\_force\_mode2() - 力控模式2
+#### FCSetDeviation() - 设置力控位移和姿态偏差
 
 ```python
-plugins.fc_force_mode2(pose, force, reference=-1, user=-1, tool=-1) -> str
-```
-
-**示例**:
-
-```python
-pose = [1, 1, 1, 0, 0, 0]
-force = [5, 5, 5, 0, 0, 0]
-robot.plugins.fc_force_mode2(pose, force)
-```
-
-#### fc\_force\_mode3() - 力控模式3
-
-```python
-plugins.fc_force_mode3(pose, force, reference=-1, user=-1, tool=-1) -> str
-```
-
-**示例**:
-
-```python
-pose = [2, 2, 0, 0, 0, 0]
-force = [0, 0, -10, 0, 0, 0]
-robot.plugins.fc_force_mode3(pose, force)
-```
-
-#### fc\_force\_mode4() - 力控模式4
-
-```python
-plugins.fc_force_mode4(pose, force, reference=-1, user=-1, tool=-1) -> str
-```
-
-**示例**:
-
-```python
-pose = [1, 1, 1, 1, 1, 0]
-force = [0, 0, -8, 0, 0, 0]
-robot.plugins.fc_force_mode4(pose, force)
-```
-
-### 力控参数设置
-
-#### fc\_set\_param() - 设置力控参数
-
-```python
-plugins.fc_set_param(index, value) -> str
+plugins.FCSetDeviation(deviation, control_type=-1) -> str
 ```
 
 **参数**:
 
-| 参数    | 类型    | 说明   |
-| ----- | ----- | ---- |
-| index | int   | 参数索引 |
-| value | float | 参数值  |
+| 参数           | 类型             | 说明                                                                                                                      |
+| ------------ | -------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| deviation    | Sequence[float] | 6个方向的偏差 [x,y,z,rx,ry,rz]。位移偏差(mm)范围(0,1000]，默认100；姿态偏差(度)范围(0,360]，默认36                                                  |
+| control_type | int            | （可选）控制类型。-1:默认值；0:超过阈值时报警；1:超过阈值时停止搜寻继续运动                                                                                   |
 
 **示例**:
 
 ```python
-robot.plugins.fc_set_param(0, 100)
+# 设置位移偏差200mm，姿态偏差36度
+robot.plugins.FCSetDeviation([200, 200, 200, 36, 36, 36])
 ```
 
-#### fc\_get\_param() - 获取力控参数
+#### FCSetForceLimit() - 设置最大力限制
 
 ```python
-plugins.fc_get_param(index) -> str
+plugins.FCSetForceLimit(x, y, z, rx, ry, rz) -> str
+```
+
+**参数**:
+
+| 参数 | 类型     | 说明                                                                   |
+| -- | ------ | -------------------------------------------------------------------- |
+| x  | float  | X方向最大力限制(N)，范围(0, 500]，默认500                                                      |
+| y  | float  | Y方向最大力限制(N)，范围(0, 500]，默认500                                                      |
+| z  | float  | Z方向最大力限制(N)，范围(0, 500]，默认500                                                      |
+| rx | float  | Rx方向最大力矩限制(N/m)，范围(0, 50]，默认50                                                  |
+| ry | float  | Ry方向最大力矩限制(N/m)，范围(0, 50]，默认50                                                  |
+| rz | float  | Rz方向最大力矩限制(N/m)，范围(0, 50]，默认50                                                  |
+
+**示例**:
+
+```python
+robot.plugins.FCSetForceLimit(500, 500, 500, 50, 50, 50)
+```
+
+#### FCSetMass() - 设置惯性系数
+
+```python
+plugins.FCSetMass(x, y, z, rx, ry, rz) -> str
+```
+
+**参数**:
+
+| 参数 | 类型     | 说明                                                     |
+| -- | ------ | ------------------------------------------------------ |
+| x  | float  | X方向惯性系数(kg)，范围(0, 10000]，默认20                             |
+| y  | float  | Y方向惯性系数(kg)，范围(0, 10000]，默认20                             |
+| z  | float  | Z方向惯性系数(kg)，范围(0, 10000]，默认20                             |
+| rx | float  | Rx方向惯性系数(kg·m²)，范围(0, 10000]，默认20                         |
+| ry | float  | Ry方向惯性系数(kg·m²)，范围(0, 10000]，默认20                         |
+| rz | float  | Rz方向惯性系数(kg·m²)，范围(0, 10000]，默认20                         |
+
+**示例**:
+
+```python
+robot.plugins.FCSetMass(20, 20, 20, 20, 20, 20)
+```
+
+#### FCSetStiffness() - 设置弹性系数
+
+```python
+plugins.FCSetStiffness(x, y, z, rx, ry, rz) -> str
+```
+
+**参数**:
+
+| 参数 | 类型     | 说明                                                         |
+| -- | ------ | ---------------------------------------------------------- |
+| x  | float  | X方向弹性系数(N/mm)，范围[0, 10000]，默认30                           |
+| y  | float  | Y方向弹性系数(N/mm)，范围[0, 10000]，默认30                           |
+| z  | float  | Z方向弹性系数(N/mm)，范围[0, 10000]，默认30                           |
+| rx | float  | Rx方向弹性系数(N/m·deg)，范围[0, 10000]，默认30                      |
+| ry | float  | Ry方向弹性系数(N/m·deg)，范围[0, 10000]，默认30                      |
+| rz | float  | Rz方向弹性系数(N/m·deg)，范围[0, 10000]，默认30                      |
+
+**示例**:
+
+```python
+robot.plugins.FCSetStiffness(30, 30, 30, 30, 30, 30)
+```
+
+#### FCSetDamping() - 设置阻尼系数
+
+```python
+plugins.FCSetDamping(x, y, z, rx, ry, rz) -> str
+```
+
+**参数**:
+
+| 参数 | 类型     | 说明                                                           |
+| -- | ------ | ------------------------------------------------------------ |
+| x  | float  | X方向阻尼系数 (N·s/mm)，范围[0, 1000]，默认50                          |
+| y  | float  | Y方向阻尼系数 (N·s/mm)，范围[0, 1000]，默认50                          |
+| z  | float  | Z方向阻尼系数 (N·s/mm)，范围[0, 1000]，默认50                          |
+| rx | float  | Rx方向阻尼系数(N·s/m·deg)，范围[0, 1000]，默认50                     |
+| ry | float  | Ry方向阻尼系数(N·s/m·deg)，范围[0, 1000]，默认50                     |
+| rz | float  | Rz方向阻尼系数(N·s/m·deg)，范围[0, 1000]，默认50                     |
+
+**示例**:
+
+```python
+robot.plugins.FCSetDamping(50, 50, 50, 50, 50, 50)
+```
+
+#### FCSetForceSpeedLimit() - 设置力控调节速度
+
+```python
+plugins.FCSetForceSpeedLimit(x, y, z, rx, ry, rz) -> str
+```
+
+**参数**:
+
+| 参数 | 类型     | 说明                                                        |
+| -- | ------ | --------------------------------------------------------- |
+| x  | float  | X方向力控调节速度(mm/s)，范围(0, 300]，默认20                              |
+| y  | float  | Y方向力控调节速度(mm/s)，范围(0, 300]，默认20                              |
+| z  | float  | Z方向力控调节速度(mm/s)，范围(0, 300]，默认20                              |
+| rx | float  | Rx方向力控调节速度(deg/s)，范围(0, 90]，默认20                           |
+| ry | float  | Ry方向力控调节速度(deg/s)，范围(0, 90]，默认20                           |
+| rz | float  | Rz方向力控调节速度(deg/s)，范围(0, 90]，默认20                           |
+
+**示例**:
+
+```python
+robot.plugins.FCSetForceSpeedLimit(20, 20, 20, 20, 20, 20)
+```
+
+#### FCSetForce() - 实时调整恒力设置
+
+```python
+plugins.FCSetForce(x, y, z, rx, ry, rz) -> str
+```
+
+**参数**:
+
+| 参数 | 类型     | 说明                                                               |
+| -- | ------ | ---------------------------------------------------------------- |
+| x  | float  | X方向恒力值(N)，范围[-200, 200]                                              |
+| y  | float  | Y方向恒力值(N)，范围[-200, 200]                                              |
+| z  | float  | Z方向恒力值(N)，范围[-200, 200]                                              |
+| rx | float  | Rx方向恒力值(N/m)，范围[-12, 12]                                          |
+| ry | float  | Ry方向恒力值(N/m)，范围[-12, 12]                                          |
+| rz | float  | Rz方向恒力值(N/m)，范围[-12, 12]                                          |
+
+**示例**:
+
+```python
+# XYZ方向恒力50N，姿态方向恒力10N/m
+robot.plugins.FCSetForce(50, 50, 50, 10, 10, 10)
+```
+
+#### FCOff() - 退出力控模式
+
+```python
+plugins.FCOff() -> str
 ```
 
 **示例**:
 
 ```python
-response = robot.plugins.fc_get_param(0)
-print(f"力控参数0: {response}")
+# 关闭力控模式
+robot.plugins.FCOff()
 ```
 
 ### 传送带跟踪
 
-#### conveyor\_create() - 创建传送带跟踪
+#### CnvInit() - 开启传送带
 
 ```python
-plugins.conveyor_create(sensor_index, conveyor_index, direction=1) -> str
+plugins.CnvInit(index) -> str
+```
+
+**参数**:
+
+| 参数    | 类型  | 说明          |
+| ----- | --- | ----------- |
+| index | int | 传送带索引（1-3） |
+
+**示例**:
+
+```python
+robot.plugins.CnvInit(1)
+```
+
+#### GetCnvObject() - 等待工件进入抓取区域
+
+```python
+plugins.GetCnvObject(obj_id) -> str
+```
+
+**参数**:
+
+| 参数   | 类型  | 说明                          |
+| ---- | --- | --------------------------- |
+| obj_id | int | 工件类型，取值范围[0, 15]。0：不指定工件类型，获取最先进入队列的工件信息 |
+
+**示例**:
+
+```python
+response = robot.plugins.GetCnvObject(0)
+```
+
+#### StartSyncCnv() - 开启传送带跟踪功能
+
+```python
+plugins.StartSyncCnv() -> str
 ```
 
 **示例**:
 
 ```python
-robot.plugins.conveyor_create(0, 0, direction=1)
+robot.plugins.StartSyncCnv()
 ```
 
-#### conveyor\_start() - 启动传送带跟踪
+#### CnvMovL() - 传送带跟随直线运动
 
 ```python
-plugins.conveyor_start(conveyor_index) -> str
+plugins.CnvMovL(index, pose, offset, mode) -> str
+```
+
+**参数**:
+
+| 参数     | 类型           | 说明                                                                 |
+| ------ | ------------ | ------------------------------------------------------------------ |
+| index  | int          | 传送带编号。取值范围：0~7。                                                     |
+| pose   | Sequence[float] | 参考世界坐标系下的目标点位置 \[x, y, z, rx, ry, rz]                             |
+| offset | Sequence[float] | 传送带跟踪偏移位置 \[x, y, z, rx, ry, rz]                                  |
+| mode   | int          | 运行模式。 0：按位姿跟踪。 1：按路径跟踪。                                             |
+
+**返回值格式**: `ErrorID,{},CnvMovL(index, pose, offset, mode);`
+
+**示例**:
+
+```python
+robot.plugins.CnvMovL(0, [400, 0, 300, 180, 0, 0], [0, 0, 0, 0, 0, 0], 0)
+```
+
+#### CnvMovC() - 传送带跟随圆弧运动
+
+```python
+plugins.CnvMovC(via_point, target_point, user=-1, tool=-1, a=-1, v=-1, speed=-1, cp=-1, r=-1, mode=0, coord_type=CoordinateType.CARTESIAN) -> str
+```
+
+文档原型：`CnvMovC(P1, P2, user, tool, a, v, cp|r, mode)`
+- **P1 = 中间点 via_point**（先经过）
+- **P2 = 目标点 target_point**（后到达）
+
+**参数**:
+
+| 参数           | 类型              | 默认值   | 说明                                                            |
+| ------------ | --------------- | ----- | ------------------------------------------------------------- |
+| via\_point   | Sequence[float] | -     | 圆弧中间点 P1 [x,y,z,rx,ry,rz] 或 [j1..j6]                        |
+| target\_point | Sequence[float] | -     | 圆弧终点 P2 [x,y,z,rx,ry,rz] 或 [j1..j6]                         |
+| user         | int             | -1    | 用户坐标系编号（0~50；-1=当前）                                       |
+| tool         | int             | -1    | 工具坐标系编号（0~50；-1=当前）                                       |
+| a            | int             | -1    | 加速度比例（1~100；-1=默认）                                          |
+| v            | int             | -1    | 速度比例（1~100；-1=默认，与 speed 互斥，speed 优先）                            |
+| speed        | int             | -1    | 目标速度（mm/s），与 v 互斥（优先 speed）                                      |
+| cp           | int             | -1    | 平滑过渡比例（0~100；-1=不设置，与 r 互斥）                                  |
+| r            | int             | -1    | 平滑过渡半径（mm；-1=不设置，与 cp 互斥）                                    |
+| mode         | int             | 0     | 插补模式，默认 0                                                     |
+| coord\_type  | CoordinateType  | CARTESIAN | 点位坐标系类型：CARTESIAN（笛卡尔 pose=）或 JOINT（关节 joint=）                  |
+
+**返回值格式**: `ErrorID,{flag},CnvMovC(P1,P2,user,tool,a,v,cp|r,mode);`
+
+**示例**:
+
+```python
+# 文档示例：CnvMovC(joint={1,2,3,4,5,6},joint={7,8,9,10,11,12},user=1,tool=0,a=20,v=50,cp=100)
+# 对应 SDK 调用：
+via    = [1, 2, 3, 4, 5, 6]
+target = [7, 8, 9, 10, 11, 12]
+robot.plugins.CnvMovC(via, target, user=1, tool=0, a=20, v=50, cp=100, coord_type=CoordinateType.JOINT)
+```
+
+#### StopSyncCnv() - 停止传送带跟踪
+
+```python
+plugins.StopSyncCnv() -> str
 ```
 
 **示例**:
 
 ```python
-robot.plugins.conveyor_start(0)
+robot.plugins.StopSyncCnv()
 ```
 
-#### conveyor\_stop() - 停止传送带跟踪
+#### SetCnvPointOffset() - 设置传送带用户坐标系偏移
 
 ```python
-plugins.conveyor_stop(conveyor_index) -> str
-```
-
-**示例**:
-
-```python
-robot.plugins.conveyor_stop(0)
-```
-
-#### conveyor\_set\_speed() - 设置传送带速度
-
-```python
-plugins.conveyor_set_speed(conveyor_index, speed) -> str
+plugins.SetCnvPointOffset(x_offset, y_offset) -> str
 ```
 
 **示例**:
 
 ```python
-robot.plugins.conveyor_set_speed(0, 50)
+robot.plugins.SetCnvPointOffset(10, 5)
+```
+
+#### SetCnvTimeCompensation() - 设置补偿时间
+
+```python
+plugins.SetCnvTimeCompensation(compensation) -> str
+```
+
+**示例**:
+
+```python
+robot.plugins.SetCnvTimeCompensation(100)
 ```
 
 ***
@@ -1812,7 +2100,7 @@ pose.to_list()  # 转换为列表 [x, y, z, rx, ry, rz]
 
 ```python
 # 获取状态
-status = robot.get_status()
+status = robot.GetStatus()
 
 if status:
     # 机器人模式
@@ -1899,17 +2187,17 @@ import time
 
 # 连接机器人
 robot = DobotRobot("192.168.1.100")
-robot.connect()
+robot.Connect()
 
 try:
     # 请求控制
-    robot.robot_control.request_control()
+    robot.robot_control.RequestControl()
     
     # 清除报警
-    robot.robot_control.clear_error()
+    robot.robot_control.ClearError()
     
     # 使能
-    robot.robot_control.enable_robot()
+    robot.robot_control.EnableRobot()
     print("机器人已使能")
     
     # 等待稳定
@@ -1917,33 +2205,33 @@ try:
     
     # 关节运动
     print("执行关节运动...")
-    robot.motion.movj([0, 0, 90, 0, 90, 0], CoordinateType.JOINT)
+    robot.motion.MovJ([0, 0, 90, 0, 90, 0], CoordinateType.JOINT)
     time.sleep(3)
     
     # 直线运动
     print("执行直线运动...")
-    robot.motion.movl([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
+    robot.motion.MovL([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
     time.sleep(3)
     
     # 圆弧运动
     print("执行圆弧运动...")
     mid_point = [400, 100, 300, 180, 0, 0]
     end_point = [400, 200, 300, 180, 0, 0]
-    robot.motion.arc(mid_point, end_point, CoordinateType.CARTESIAN)
+    robot.motion.Arc(mid_point, end_point, CoordinateType.CARTESIAN)
     time.sleep(3)
     
     # 回到初始位置
     print("回到初始位置...")
-    robot.motion.init_pose()
+    robot.motion.Home()
     time.sleep(3)
     
     # 下使能
-    robot.robot_control.disable_robot()
+    robot.robot_control.DisableRobot()
     print("机器人已下使能")
     
 finally:
     # 断开连接
-    robot.disconnect()
+    robot.Disconnect()
     print("已断开连接")
 ```
 
@@ -1953,29 +2241,29 @@ finally:
 from dobot_sdk import DobotRobot
 
 with DobotRobot("192.168.1.100") as robot:
-    robot.robot_control.request_control()
-    robot.robot_control.clear_error()
-    robot.robot_control.enable_robot()
+    robot.robot_control.RequestControl()
+    robot.robot_control.ClearError()
+    robot.robot_control.EnableRobot()
     
     # 设置DO1
-    robot.io.do(1, 1)
+    robot.io.DO(1, 1)
     print("DO1已打开")
     
     # 读取DI1状态
-    response = robot.io.get_di(1)
+    response = robot.io.DI(1)
     print(f"DI1状态: {response}")
     
     # 设置模拟输出
-    robot.io.set_ao(1, 50)  # 输出5V
+    robot.io.AO(1, 50)  # 输出5V
     print("AO1已设置为5V")
     
     # 等待输入信号
     print("等待DI1为高电平...")
-    robot.io.di_group(0, [1, 0, 0, 0])
+    robot.io.DIGroup(0, [1, 0, 0, 0])
     print("DI1已触发")
     
     # 关闭DO1
-    robot.io.do(1, 0)
+    robot.io.DO(1, 0)
     print("DO1已关闭")
 ```
 
@@ -1994,27 +2282,27 @@ def on_status(status):
         print(f"\r位置: X={x:.2f} Y={y:.2f} Z={z:.2f}", end="")
 
 robot = DobotRobot("192.168.1.100")
-robot.connect()
-robot.robot_control.request_control()
-robot.robot_control.clear_error()
-robot.robot_control.enable_robot()
+robot.Connect()
+robot.robot_control.RequestControl()
+robot.robot_control.ClearError()
+robot.robot_control.EnableRobot()
 
 # 启动状态监控
-robot.start_feedback_monitor(callback=on_status)
+robot.StartFeedbackMonitor(callback=on_status)
 
 try:
     # 执行运动
-    robot.motion.movj([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
+    robot.motion.MovJ([400, 0, 300, 180, 0, 0], CoordinateType.CARTESIAN)
     time.sleep(5)
     
     # 获取当前状态
-    status = robot.get_status()
+    status = robot.GetStatus()
     if status:
         print(f"\n最终位置: {status.tool_vector_actual.to_list()}")
         
 finally:
-    robot.stop_feedback_monitor()
-    robot.disconnect()
+    robot.StopFeedbackMonitor()
+    robot.Disconnect()
 ```
 
 ### 示例4：力控模式
@@ -2025,26 +2313,26 @@ import time
 
 with DobotRobot("192.168.1.100") as robot:
     # 请求控制并使能机器人
-    robot.robot_control.request_control()
-    robot.robot_control.clear_error()
-    robot.robot_control.enable_robot()
+    robot.robot_control.RequestControl()
+    robot.robot_control.ClearError()
+    robot.robot_control.EnableRobot()
     
     # 开启力传感器
-    robot.plugins.enable_ft_sensor(1)
-    robot.plugins.six_force_home()
+    robot.plugins.EnableFTSensor(1)
+    robot.plugins.SixForceHome()
     
     # 设置力控参数
     stiffness = [1, 1, 1, 0, 0, 0]   # XYZ方向刚度
     force = [0, 0, -5, 0, 0, 0]       # Z方向施加5N力
     
     # 进入力控模式
-    robot.plugins.fc_force_mode(stiffness, force)
+    robot.plugins.FCForceMode(stiffness, force)
     
     # 保持力控状态5秒
     time.sleep(5)
     
     # 停止力控
-    robot.motion.stop()
+    robot.robot_control.Stop()
 ```
 
 ***

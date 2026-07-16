@@ -23,26 +23,26 @@ def main():
             
             # 请求TCP控制模式
             print("请求TCP控制模式...")
-            response = robot.robot_control.request_control()
+            response = robot.robot_control.RequestControl()
             print(f"响应: {response}")
             
             # 清除报警（如果有）
             print("清除报警...")
-            robot.robot_control.clear_error()
+            robot.robot_control.ClearError()
             
             # 使能机器人（设置1kg负载）
             print("使能机器人...")
-            response = robot.robot_control.enable_robot(load=1.0)
+            response = robot.robot_control.EnableRobot(load=1.0)
             print(f"响应: {response}")
             
             # 设置全局速度比例
             speed = 50
             print(f"设置全局速度为 {speed}%...")
-            robot.robot_control.speed_factor(speed)
+            robot.robot_control.SpeedFactor(speed)
             
             # 获取机器人状态
             print("\n获取机器人状态...")
-            mode = robot.robot_control.robot_mode()
+            mode = robot.robot_control.RobotMode()
             print(f"机器人模式: {mode}")
             
             # 等待2秒
@@ -51,7 +51,7 @@ def main():
             
             # 下使能机器人
             print("\n下使能机器人...")
-            response = robot.robot_control.disable_robot()
+            response = robot.robot_control.DisableRobot()
             print(f"响应: {response}")
             
             print("\n" + "=" * 50)

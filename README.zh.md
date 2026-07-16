@@ -99,15 +99,15 @@ ROBOT_IP = "192.168.1.100"
 # 使用上下文管理器（推荐）
 with DobotRobot(ROBOT_IP) as robot:
     # 初始化
-    robot.robot_control.request_control()
-    robot.robot_control.clear_error()
-    robot.robot_control.enable_robot(load=1.0)
+    robot.robot_control.RequestControl()
+    robot.robot_control.ClearError()
+    robot.robot_control.EnableRobot(load=1.0)
 
     # 执行操作...
-    robot.robot_control.speed_factor(50)
+    robot.robot_control.SpeedFactor(50)
 
     # 下使能
-    robot.robot_control.disable_robot()
+    robot.robot_control.DisableRobot()
 ```
 
 ### 2. 运动控制
@@ -117,17 +117,17 @@ from dobot_sdk import DobotRobot
 from dobot_sdk import CoordinateType
 
 with DobotRobot("192.168.1.100") as robot:
-    robot.robot_control.request_control()
-    robot.robot_control.enable_robot()
+    robot.robot_control.RequestControl()
+    robot.robot_control.EnableRobot()
 
     # 笛卡尔空间运动
-    robot.motion.movj(
+    robot.motion.MovJ(
         pose=[400, 0, 300, 180, 0, 0],
         coord_type=CoordinateType.CARTESIAN
     )
 
     # 直线运动
-    robot.motion.movl(
+    robot.motion.MovL(
         pose=[400, 100, 300, 180, 0, 0],
         coord_type=CoordinateType.CARTESIAN
     )
@@ -139,14 +139,14 @@ with DobotRobot("192.168.1.100") as robot:
 from dobot_sdk import DobotRobot
 
 with DobotRobot("192.168.1.100") as robot:
-    robot.robot_control.enable_robot()
+    robot.robot_control.EnableRobot()
 
-    # 数字输出
-    robot.io.do_on(1)    # 打开DO1
-    robot.io.do_off(1)   # 关闭DO1
+    # 数字输出（按手臂二开md文档：DO(index, status)）
+    robot.io.DO(1, 1)    # 打开DO1
+    robot.io.DO(1, 0)    # 关闭DO1
 
     # 读取输入
-    di_status = robot.io.di(1)  # 读取DI1
+    di_status = robot.io.DI(1)  # 读取DI1
 ```
 
 ---
@@ -252,18 +252,18 @@ robot = DobotRobot(
 def on_connection_status(is_connected):
     print(f"连接状态: {'已连接' if is_connected else '已断开'}")
 
-robot.enable_auto_reconnect(enable=True, callback=on_connection_status)
+robot.EnableAutoReconnect(enable=True, callback=on_connection_status)
 
 # 检查连接状态
-if robot.is_connected:
+if robot.IsConnected:
     print("机器人已连接")
 ```
 
 | 函数 | 说明 |
 |------|------|
-| `robot.set_timeout(connect_timeout, receive_timeout)` | 设置超时时间 |
-| `robot.enable_auto_reconnect(enable, callback)` | 启用/禁用自动重连 |
-| `robot.is_connected` | 检查连接状态（属性） |
+| `robot.SetTimeout(connect_timeout, receive_timeout)` | 设置超时时间 |
+| `robot.EnableAutoReconnect(enable, callback)` | 启用/禁用自动重连 |
+| `robot.IsConnected` | 检查连接状态（属性） |
 
 **连接特性：**
 - **接收超时**：默认10秒，防止接收操作阻塞

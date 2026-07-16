@@ -19,7 +19,7 @@ class Communication:
 
     # ==================== Modbus 主站创建 ====================
 
-    def modbus_create(self, ip: str, port: int, slave_id: int, is_rtu: int = 0) -> str:
+    def ModbusCreate(self, ip: str, port: int, slave_id: int, is_rtu: int = 0) -> str:
         """
         创建 Modbus 主站
 
@@ -36,7 +36,7 @@ class Communication:
         cmd = f'ModbusCreate("{ip}",{port},{slave_id},{is_rtu})'
         return self._send_cmd(cmd)
 
-    def modbus_rtu_create(self, slave_id: int, baud: int, 
+    def ModbusRTUCreate(self, slave_id: int, baud: int, 
                           parity: str = "E", data_bit: int = 8, 
                           stop_bit: int = 1) -> str:
         """
@@ -58,7 +58,7 @@ class Communication:
         cmd = f'ModbusRTUCreate({slave_id},{baud},"{parity}",{data_bit},{stop_bit})'
         return self._send_cmd(cmd)
 
-    def modbus_close(self, index: int) -> str:
+    def ModbusClose(self, index: int) -> str:
         """
         与 Modbus 从站断开连接，释放主站
 
@@ -69,7 +69,7 @@ class Communication:
 
     # ==================== 触点寄存器====================
 
-    def get_in_bits(self, index: int, addr: int, count: int) -> str:
+    def GetInBits(self, index: int, addr: int, count: int) -> str:
         """
         读取 Modbus 从站触点寄存器（离散输入）地址的值
 
@@ -89,7 +89,7 @@ class Communication:
 
     # ==================== 输入寄存器====================
 
-    def get_in_regs(self, index: int, addr: int, count: int, val_type: str = "U16") -> str:
+    def GetInRegs(self, index: int, addr: int, count: int, val_type: str = "U16") -> str:
         """
         按照指定的数据类型，读取 Modbus 从站输入寄存器地址的值
 
@@ -117,7 +117,7 @@ class Communication:
 
     # ==================== 线圈寄存器====================
 
-    def get_coils(self, index: int, addr: int, count: int) -> str:
+    def GetCoils(self, index: int, addr: int, count: int) -> str:
         """
         读取 Modbus 从站线圈寄存器地址的值
 
@@ -135,7 +135,7 @@ class Communication:
         cmd = f"GetCoils({index},{addr},{count})"
         return self._send_cmd(cmd)
 
-    def set_coils(self, index: int, addr: int, count: int, val_tab: Union[List[int], str]) -> str:
+    def SetCoils(self, index: int, addr: int, count: int, val_tab: Union[List[int], str]) -> str:
         """
         将指定的值写入线圈寄存器指定的地址
 
@@ -159,9 +159,27 @@ class Communication:
         cmd = f"SetCoils({index},{addr},{count},{val_str})"
         return self._send_cmd(cmd)
 
+    def SetSingleCoil(self, index: int, addr: int, value: int) -> str:
+        """
+        写入单个线圈寄存器（V4.6.6新增指令）
+
+        Args:
+            index: 创建主站时返回的主站索引
+            addr: 线圈寄存器地址
+            value: 要写入的值，0或1
+
+        Returns:
+            str: ErrorID,{},SetSingleCoil(index,addr,value);
+        """
+        if value not in [0, 1]:
+            raise ValueError("value 必须是 0 或 1")
+        
+        cmd = f"SetSingleCoil({index},{addr},{value})"
+        return self._send_cmd(cmd)
+
     # ==================== 保持寄存器====================
 
-    def get_hold_regs(self, index: int, addr: int, count: int, val_type: str = "U16") -> str:
+    def GetHoldRegs(self, index: int, addr: int, count: int, val_type: str = "U16") -> str:
         """
         按照指定的数据类型，读取 Modbus 从站保持寄存器地址的值
 
@@ -187,7 +205,7 @@ class Communication:
         cmd = f'GetHoldRegs({index},{addr},{count},"{val_type}")'
         return self._send_cmd(cmd)
 
-    def set_hold_regs(self, index: int, addr: int, count: int, 
+    def SetHoldRegs(self, index: int, addr: int, count: int, 
                       val_tab: Union[List[int], str], val_type: str = "U16") -> str:
         """
         将指定的值以指定的数据类型写入Modbus 从站保持寄存器指定的地址
@@ -222,9 +240,27 @@ class Communication:
         cmd = f'SetHoldRegs({index},{addr},{count},{val_str},"{val_type}")'
         return self._send_cmd(cmd)
 
+    def SetSingleHoldReg(self, index: int, addr: int, value: int) -> str:
+        """
+        写入单个保持寄存器（V4.6.6新增指令）
+
+        Args:
+            index: 创建主站时返回的主站索引，取值范围：[0, 4]
+            addr: 保持寄存器地址
+            value: 要写入的值
+
+        Returns:
+            str: ErrorID,{},SetSingleHoldReg(index,addr,value);
+        """
+        if not 0 <= index <= 4:
+            raise ValueError("index 取值范围必须是 [0, 4]")
+        
+        cmd = f"SetSingleHoldReg({index},{addr},{value})"
+        return self._send_cmd(cmd)
+
     # ==================== 总线寄存器- 输入寄存器====================
 
-    def get_input_bool(self, address: int) -> str:
+    def GetInputBool(self, address: int) -> str:
         """
         获取输入寄存器指定地址的bool 类型的数据
 
@@ -240,7 +276,7 @@ class Communication:
         
         return self._send_cmd(f"GetInputBool({address})")
 
-    def get_input_int(self, address: int) -> str:
+    def GetInputInt(self, address: int) -> str:
         """
         获取输入寄存器指定地址的int 类型的数据
 
@@ -256,7 +292,7 @@ class Communication:
         
         return self._send_cmd(f"GetInputInt({address})")
 
-    def get_input_float(self, address: int) -> str:
+    def GetInputFloat(self, address: int) -> str:
         """
         获取输入寄存器指定地址的float 类型的数据
 
@@ -274,7 +310,7 @@ class Communication:
 
     # ==================== 总线寄存器- 输出寄存器====================
 
-    def get_output_bool(self, address: int) -> str:
+    def GetOutputBool(self, address: int) -> str:
         """
         获取输出寄存器指定地址的bool 类型的数据
 
@@ -290,7 +326,7 @@ class Communication:
         
         return self._send_cmd(f"GetOutputBool({address})")
 
-    def get_output_int(self, address: int) -> str:
+    def GetOutputInt(self, address: int) -> str:
         """
         获取输出寄存器指定地址的int 类型的数据
 
@@ -306,7 +342,7 @@ class Communication:
         
         return self._send_cmd(f"GetOutputInt({address})")
 
-    def get_output_float(self, address: int) -> str:
+    def GetOutputFloat(self, address: int) -> str:
         """
         获取输出寄存器指定地址的float 类型的数据
 
@@ -322,7 +358,7 @@ class Communication:
         
         return self._send_cmd(f"GetOutputFloat({address})")
 
-    def set_output_bool(self, address: int, value: int) -> str:
+    def SetOutputBool(self, address: int, value: int) -> str:
         """
         设置输出寄存器指定地址的 bool 值
 
@@ -340,7 +376,7 @@ class Communication:
         
         return self._send_cmd(f"SetOutputBool({address},{value})")
 
-    def set_output_int(self, address: int, value: int) -> str:
+    def SetOutputInt(self, address: int, value: int) -> str:
         """
         设置输出寄存器指定地址的 int 值
 
@@ -356,7 +392,7 @@ class Communication:
         
         return self._send_cmd(f"SetOutputInt({address},{value})")
 
-    def set_output_float(self, address: int, value: float) -> str:
+    def SetOutputFloat(self, address: int, value: float) -> str:
         """
         设置输出寄存器指定地址的 float 值
 
@@ -372,27 +408,4 @@ class Communication:
         
         return self._send_cmd(f"SetOutputFloat({address},{value})")
 
-    # ==================== 用户寄存器====================
 
-    def set_user_register(self, index: int, value: int) -> str:
-        """
-        设置用户寄存器
-
-        Args:
-            index: 寄存器索引(0-99)
-            value: 寄存器的值
-        """
-        if not 0 <= index <= 99:
-            raise ValueError("寄存器索引必须在 0-99 之间")
-        return self._send_cmd(f"SetUserRegister({index},{value})")
-
-    def get_user_register(self, index: int) -> str:
-        """
-        获取用户寄存器
-
-        Args:
-            index: 寄存器索引(0-99)
-        """
-        if not 0 <= index <= 99:
-            raise ValueError("寄存器索引必须在 0-99 之间")
-        return self._send_cmd(f"GetUserRegister({index})")

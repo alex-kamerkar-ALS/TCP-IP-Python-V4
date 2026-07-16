@@ -15,27 +15,27 @@ def test_plugins_methods():
     robot = DobotRobot("192.168.1.100")
     
     # 测试力控方法
-    assert hasattr(robot.plugins, 'fc_force_mode')
-    assert hasattr(robot.plugins, 'fc_set_deviation')
-    assert hasattr(robot.plugins, 'fc_set_force_limit')
-    assert hasattr(robot.plugins, 'fc_set_mass')
-    assert hasattr(robot.plugins, 'fc_set_stiffness')
-    assert hasattr(robot.plugins, 'fc_set_damping')
-    assert hasattr(robot.plugins, 'fc_off')
-    assert hasattr(robot.plugins, 'fc_set_force')
-    assert hasattr(robot.plugins, 'set_fc_collision')
-    assert hasattr(robot.plugins, 'fc_collision_switch')
+    assert hasattr(robot.plugins, 'FCForceMode')
+    assert hasattr(robot.plugins, 'FCSetDeviation')
+    assert hasattr(robot.plugins, 'FCSetForceLimit')
+    assert hasattr(robot.plugins, 'FCSetMass')
+    assert hasattr(robot.plugins, 'FCSetStiffness')
+    assert hasattr(robot.plugins, 'FCSetDamping')
+    assert hasattr(robot.plugins, 'FCOff')
+    assert hasattr(robot.plugins, 'FCSetForce')
+    assert hasattr(robot.plugins, 'SetFCCollision')
+    assert hasattr(robot.plugins, 'FCCollisionSwitch')
     print("力控方法存在")
     
     # 测试传送带方法
-    assert hasattr(robot.plugins, 'cnv_init')
-    assert hasattr(robot.plugins, 'get_cnv_object')
-    assert hasattr(robot.plugins, 'start_sync_cnv')
-    assert hasattr(robot.plugins, 'cnv_movl')
-    assert hasattr(robot.plugins, 'cnv_movc')
-    assert hasattr(robot.plugins, 'stop_sync_cnv')
-    assert hasattr(robot.plugins, 'set_cnv_point_offset')
-    assert hasattr(robot.plugins, 'set_cnv_time_compensation')
+    assert hasattr(robot.plugins, 'CnvInit')
+    assert hasattr(robot.plugins, 'GetCnvObject')
+    assert hasattr(robot.plugins, 'StartSyncCnv')
+    assert hasattr(robot.plugins, 'CnvMovL')
+    assert hasattr(robot.plugins, 'CnvMovC')
+    assert hasattr(robot.plugins, 'StopSyncCnv')
+    assert hasattr(robot.plugins, 'SetCnvPointOffset')
+    assert hasattr(robot.plugins, 'SetCnvTimeCompensation')
     print("传送带方法存在")
     
     del robot
@@ -47,19 +47,19 @@ def test_plugins_command_generation():
     robot = DobotRobot("192.168.1.100")
     
     # 测试力控模式设置
-    result = robot.plugins.fc_force_mode(1)
+    result = robot.plugins.FCForceMode([1,1,1,0,0,0], [0,0,0,0,0,0])
     assert result is not None
-    print(f"fc_force_mode(1): {result}")
+    print(f"FCForceMode([1,1,1,0,0,0], [0,0,0,0,0,0]): {result}")
     
     # 测试力关闭
-    result = robot.plugins.fc_off()
+    result = robot.plugins.FCOff()
     assert result is not None
-    print(f"fc_off(): {result}")
+    print(f"FCOff(): {result}")
     
     # 测试传送带初始化
-    result = robot.plugins.cnv_init(0)
+    result = robot.plugins.CnvInit(1)
     assert result is not None
-    print(f"cnv_init(0): {result}")
+    print(f"CnvInit(1): {result}")
     
     del robot
     print("插件指令生成测试通过！")

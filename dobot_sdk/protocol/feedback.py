@@ -67,8 +67,8 @@ class FeedbackParser:
         # IO状态
         status.digital_inputs = int(parsed['DigitalInputs'][0])
         status.digital_outputs = int(parsed['DigitalOutputs'][0])
-        status.safety_io_in = int(parsed['SafetyOIn'][0])
-        status.safety_io_out = int(parsed['SafetyOOut'][0])
+        status.safety_io_in = int(parsed['SafetyIOIn'][0])
+        status.safety_io_out = int(parsed['SafetyIOOut'][0])
 
         # 时间信息
         status.timestamp = int(parsed['TimeStamp'][0])
@@ -188,6 +188,7 @@ class FeedbackParser:
         status.j5_approach_state = int(parsed['J5ApproachState'][0])
         status.j6_approach_state = int(parsed['J6ApproachState'][0])
         status.safety_state = int(parsed['SafetyState'][0])
+        status.safe_state = int(parsed['SafeState'][0])
 
         # 抖动检测
         status.vibration_dis_z = float(parsed['VibrationDisZ'][0])
