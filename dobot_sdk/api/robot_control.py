@@ -655,9 +655,9 @@ class RobotControl:
         支持一维、二维、三维托盘。
 
         原型（与文档完全一致）：
-        CreateTray(Trayname, {Count}, {P1,P2}) -- 一维托盘
-        CreateTray(Trayname, {row,col}, {P1,P2,P3,P4}) -- 二维托盘
-        CreateTray(Trayname, {row,col,layer}, {P1,P2,P3,P4,P5,P6,P7,P8}) -- 三维托盘
+        CreateTray(Trayname, {Count}, {P1},{P2}) -- 一维托盘
+        CreateTray(Trayname, {row,col}, {P1},{P2},{P3},{P4}) -- 二维托盘
+        CreateTray(Trayname, {row,col,layer}, {P1},{P2},{P3},{P4},{P5},{P6},{P7},{P8}) -- 三维托盘
 
         Args:
             name: 托盘名称（最长32字节字符串，不允许纯数字或纯空格）
@@ -665,19 +665,18 @@ class RobotControl:
                 - 一维: [count] 点位数量[2,50]
                 - 二维: [row, col] 行数和列数
                 - 三维: [row, col, layer] 行数、列数、层数
-            points: 端点列表，每个端点为[x,y,z,rx,ry,rz]格式
+            points: 端点列表，每个端点为[x,y,z,rx,ry,rz]格式，每个点位作为独立参数
                 - 一维: 2个端点 [p1, p2]
                 - 二维: 4个端点 [p1, p2, p3, p4]
                 - 三维: 8个端点 [p1, p2, p3, p4, p5, p6, p7, p8]
         """
         dims = ",".join([str(d) for d in dimensions])
-        inner_point_strs = []
+        point_strs = []
         for p in points:
             if len(p) != 6:
                 raise ValueError(f"每个点位需要6个值[x,y,z,rx,ry,rz]，当前传入{len(p)}个")
-            inner_point_strs.append("pose = {" + ",".join([f"{v:.6f}" for v in p]) + "}")
-        outer_points_table = "{" + ",".join(inner_point_strs) + "}"
-        cmd = f"CreateTray({name},{{{dims}}},{outer_points_table})"
+            point_strs.append("{pose = {" + ",".join([f"{v:.6f}" for v in p]) + "}}")
+        cmd = f"CreateTray({name},{{{dims}}}," + ",".join(point_strs) + ")"
         return self._send_cmd(cmd)
 
     def GetTrayPoint(self, trayname: str, index: int) -> str:
