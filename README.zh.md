@@ -183,7 +183,7 @@ TCP-IP-Python-V4-main/
 │   ├── CR3A.png            # 机器人图片
 │   ├── SDK_API文档_完整版.md    # 完整 API 文档
 │   ├── error_controller_README.md  # HTTP 错误接口说明
-│   ├── DOBOT TCP_IP二次开发接口文档_V4.6.6_20260410_cn.md  # 官方接口文档 (MD)
+│   ├── 手臂二开md文档/          # 手臂二次开发文档
 │   └── DOBOT TCP_IP二次开发接口文档_V4.6.6_20260410_cn.pdf  # 官方接口文档 (PDF)
 ├── pyproject.toml          # 项目配置
 ├── requirements.txt        # 依赖列表
@@ -266,7 +266,7 @@ if robot.IsConnected:
 | `robot.IsConnected` | 检查连接状态（属性） |
 
 **连接特性：**
-- **接收超时**：默认10秒，防止接收操作阻塞
+- **连接超时**：默认5秒；**接收超时**：默认10秒，防止接收操作阻塞
 - **自动重连**：连接断开时自动尝试重新连接
 - **指数退避**：重连延迟按指数增长（1s, 2s, 4s, ..., 最大30s）
 - **连接回调**：连接状态变化时收到通知

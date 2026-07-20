@@ -38,13 +38,30 @@ git clone -b feature/v4-optimization https://github.com/dobot-cn/TCP-IP-Python-V
 pip install -e .
 ```
 
-**Direct Import:**
+**Direct Import (No Installation):**
+
+Suitable for development/debugging scenarios or when you do not want to modify the Python environment.
 
 ```python
+import os
 import sys
-sys.path.insert(0, 'path/to/dobot_sdk')
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from dobot_sdk import DobotRobot
 ```
+
+**Directory Structure Requirement:**
+```
+TCP-IP-Python-V4-main/
+├── dobot_sdk/                  ← SDK core package
+├── examples/                   ← Examples directory (place your script here)
+│   └── your_script.py
+└── README.md
+```
+
+**Notes:**
+- Assumes the script is located in the `examples/` directory, automatically getting the project root
+- If the script is in a different location, adjust the number of `os.path.dirname()` calls
 
 **Update or Reinstall:**
 
@@ -56,7 +73,7 @@ pip uninstall dobot_sdk -y
 pip install -e .
 
 # Verify installation
-pip show dobot-V4-sdk
+pip show dobot_sdk
 ```
 
 ### Network Connection
@@ -166,7 +183,7 @@ TCP-IP-Python-V4-main/
 │   ├── CR3A.png            # Robot Image
 │   ├── SDK_API文档_完整版.md    # Full API Documentation
 │   ├── error_controller_README.md  # HTTP Error Interface Documentation
-│   ├── DOBOT TCP_IP二次开发接口文档_V4.6.6_20260410_cn.md  # Official Interface Doc (MD)
+│   ├── 手臂二开md文档/          # Arm SDK Development Docs
 │   └── DOBOT TCP_IP二次开发接口文档_V4.6.6_20260410_cn.pdf  # Official Interface Doc (PDF)
 ├── pyproject.toml          # Project Config
 ├── requirements.txt        # Dependencies
@@ -249,7 +266,7 @@ if robot.IsConnected:
 | `robot.IsConnected` | Check connection status (property) |
 
 **Connection Features:**
-- **Receive Timeout**: Default 10 seconds, prevents blocking on receive operations
+- **Connection Timeout**: Default 5 seconds; **Receive Timeout**: Default 10 seconds, prevents blocking on receive operations
 - **Auto-reconnect**: Automatically attempts to reconnect when connection is lost
 - **Exponential Backoff**: Reconnect delay increases exponentially (1s, 2s, 4s, ..., max 30s)
 - **Connection Callback**: Get notified when connection status changes

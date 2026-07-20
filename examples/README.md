@@ -6,12 +6,15 @@
 
 | 序号 | 文件 | 功能描述 |
 |:---:|------|----------|
+| 00 | `00_logging_demo.py` | 日志系统演示 |
 | 01 | `01_basic_connection.py` | 基础连接和使能 |
 | 02 | `02_motion_control.py` | 运动控制（关节/直线/圆弧/整圆） |
 | 03 | `03_error_monitor.py` | 错误码监控和状态查询 |
 | 04 | `04_io_control.py` | IO控制（数字/模拟/末端IO） |
 | 05 | `05_coordinate_system.py` | 坐标系设置（用户/工具坐标系） |
 | 06 | `06_force_and_conveyor.py` | 力控和传送带 |
+| 07 | `07_status_monitor.py` | 状态监控 |
+| 08 | `08_multi_thread_control.py` | 多线程控制 |
 
 ## 运行示例
 
@@ -33,6 +36,12 @@ python examples/05_coordinate_system.py
 
 # 运行力控和传送带示例
 python examples/06_force_and_conveyor.py
+
+# 运行状态监控示例
+python examples/07_status_monitor.py
+
+# 运行多线程控制示例
+python examples/08_multi_thread_control.py
 ```
 
 ## 使用注意事项
