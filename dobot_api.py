@@ -879,10 +879,11 @@ class DobotApiDashboard(DobotApi):
         if useJointNear != -1:
             params.append('useJointNear={:d}'.format(useJointNear))
         if JointNear != '':
-            params.append('JointNear={:s}'.format(JointNear))
+            params.append('jointNear={:s}'.format(JointNear))
         for ii in params:
             string = string + ','+ii
         string = string + ')'
+        print("TX:", string)
         return self.sendRecvMsg(string)
 
     def GetAngle(self):
