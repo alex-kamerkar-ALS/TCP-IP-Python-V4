@@ -883,7 +883,6 @@ class DobotApiDashboard(DobotApi):
         for ii in params:
             string = string + ','+ii
         string = string + ')'
-        print("TX:", string)
         return self.sendRecvMsg(string)
 
     def GetAngle(self):
