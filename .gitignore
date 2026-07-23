@@ -1,5 +1,5 @@
 # Python cache
-*__pycache__/
+*__pycache__/*
 *.pyc
 *.pyo
 *.pyd
@@ -20,3 +20,4 @@ build/
 
 # VS Code settings
 .vscode/
+__pycache__/dobot_api.cpython-312.pyc
