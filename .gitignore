@@ -8,6 +8,7 @@
 .venv/
 venv/
 env/
+.env
 
 # Distribution / packaging
 dist/
@@ -16,18 +17,6 @@ build/
 
 # log info
 *.log
-
-# debug
-vision/vision_logs/
-vision/calibration/Calib_Images/
-~Testing/trials
-~Testing/trials_Messure1
-*.png
-*.jpg
-*.zip
-
-# Environment variables
-.env
 
 # VS Code settings
 .vscode/
